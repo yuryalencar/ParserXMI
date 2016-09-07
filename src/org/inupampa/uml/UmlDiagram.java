@@ -43,6 +43,25 @@ public abstract class UmlDiagram {
     }
     
     /**
+     * Método para pegar um elemento da lista,
+     * este elemento vai ser pego para adicionar a uma associação,
+     * pois, no documento XMI na tag UML:Association vai ter somente o
+     * ID do elemento para o referenciar, então eu uso aquele ID, para
+     * pesquisar dentro da minha lista, e pegar o elemento que necessita.
+     * @param id - Número identificador do elemento a ser pegado.
+     * @return - retorna o Elemento de acordo com o seu id específicado.
+     */
+    public UmlElement getElement(String id){
+        
+        for (UmlElement element : elements) {
+            if(element.getId().equals(id))
+                return element;
+        }
+        
+        return null; //Lançar exception
+    }
+    
+    /**
      * Adiciona um elemento na lista de elementos do
      * diagrama. Se o elemento já existir, dispara uma 
      * exception do tipo DuplicatedElementException.

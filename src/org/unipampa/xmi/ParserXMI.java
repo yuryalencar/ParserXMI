@@ -67,22 +67,66 @@ public class ParserXMI {
                 //da lista, por enquanto estou lendo somente um diagrama,
                 //mas está faltando ainda ver como vou pegar o diagrama certo
                 //da lista - Elaborando...
+                
                 }else if(eElement.getNodeName().equalsIgnoreCase("UML:UseCase")){
                     UmlElement newUseCase = new UseCaseElement(getId(eElement), getName(eElement));
                     diagrams.get(0).AddElement(newUseCase);
+                
                 }else if(eElement.getNodeName().equalsIgnoreCase("UML:Model")){
                     UmlDiagram newDiagramUseCase;
                     newDiagramUseCase = new UseCaseDiagram(getId(eElement), getName(eElement));
                     diagrams.add(newDiagramUseCase);
+                    
                 }else if(eElement.getNodeName().equalsIgnoreCase("UML:Association")){
                     // Como eu eu vou ter que fazer a pesquisa dos elementos
                     //preciso guardar antes o ID e o nome da associação, devido
                     //ao meu método se eu chamar na hora que eu for criar a 
                     //associação vai chamar o id de um elemento que não é este.
-                    String id, name;
+                    String id, name, idrefElementA, idrefElementB;
                     UmlAssociation newAssociation;
                     id = getId(eElement);
                     name = getName(eElement);
+                    
+                    // Crio uma Lista com as conexões contidas dentro do diagrama
+                    //para poder pegar seus atributos e outros elementos.
+                    NodeList nSoons = eElement.getElementsByTagName("UML:Association.connection");
+                    
+                    for(int j=0; j<nSoons.getLength(); j++){
+                        
+                        //Pegando estas conexões uma individualmente da otra para que assim eu possa
+                        //Pegar todos os dados que eu quiser.
+                        Node sNode = nSoons.item(i);
+                        
+                        // Verificando o tipo do nodo
+                        if(sNode.getNodeType() == Node.ELEMENT_NODE){
+                            
+                            Element eeElement = (Element) sNode;
+                            
+                            //Adentrando mais na associação
+                            NodeList nListG = eeElement.getElementsByTagName("UML:AssociationEnd");
+                            
+                            for(int k=0; k<nListG.getLength();k++){
+                                Node gNode = nListG.item(i);
+                                
+                                if(gNode.getNodeType() == Node.ELEMENT_NODE){
+                                    
+                                    Element gElement = (Element) gNode;
+                                    
+                                    // Neste elemento eu pego 
+                                    NodeList gListGrand = gElement.getElementsByTagName("UML:Feature.owner");
+                                    
+                                    // Somente um para cada ASSOCIATIONEND
+                                    idrefElementA = getIdref(gListGrand.item(0));
+                                    
+                                    // Neste elemento eu pego 
+                                    gListGrand = gElement.getElementsByTagName("UML:AssociationEnd.participant");
+                                    
+                                    // Somente um para cada ASSOCIATIONEND
+                                    idrefElementB = getIdref(gListGrand.item(0));
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -121,9 +165,18 @@ public class ParserXMI {
      * @param eElement - Elemento que vai ser extraído o idref
      * @return - retorna uma String com o ID (idref).
      */
-    private String getIdref(Element eElement){
+    private String getIdref(Node nNode){
         String idref;
-        idref = eElement.getAttribute("xmi.idref");
+        
+        Element eElement = (Element) nNode;
+        NodeList nList = eElement.getElementsByTagName("UML:Classifier");
+        
+        //Somente um dentro de cada nodo
+        Element eElement2 = (Element) nList.item(0);
+        
+        idref = eElement2.getAttribute("xmi.idref");
+        
+        //idref = eElement.getAttribute("xmi.idref");
         return idref;
     }
     
