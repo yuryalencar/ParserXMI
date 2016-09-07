@@ -48,7 +48,7 @@ public abstract class UmlDiagram {
      * exception do tipo DuplicatedElementException.
      * @param e Elemento a ser adicionado
      */
-    public void AddElement(UmlElement e){
+    public  void AddElement(UmlElement e){
         
         for (UmlElement element : elements) {
             if(element.getId().equals(e.getId())){
@@ -113,7 +113,10 @@ public abstract class UmlDiagram {
      * Exclusão de uma associação através do seu ID.
      * A escolha do ID veio a partir de saber que cada associação, só pode
      * conter um único.
-     * @param Id - Da associação que quer excluir 
+     * @param Id - Da associação que quer excluir
+     * Ainda vendo como fazer esta exclusão, provavelmente será modificada,
+     * por uma que recebe o objeto da associação e o pesquisa por ID, ao invés de
+     * receber o ID.
      */
     public void removeAssociation(String Id){
         for (UmlAssociation association : associations) {
