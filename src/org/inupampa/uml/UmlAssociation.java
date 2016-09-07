@@ -9,7 +9,7 @@ import com.sun.nio.sctp.Association;
 import java.util.Objects;
 
 /**
- * @author andersond
+ * @author Yury Alencar
  * Representa uma associação entre dois elementos 
  * da Uml. 
  */

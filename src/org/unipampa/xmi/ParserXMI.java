@@ -17,7 +17,7 @@ import org.xml.sax.SAXException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- * @author anderson domingues
+ * @author Yury Alencar
  * Esta classe possui os métodos necessários para extrair
  * informações de modelos UML armazenados em arquivos XMI.
  */
@@ -42,46 +42,12 @@ public class ParserXMI {
      * @throws IOException - Referente a outro erro que pode dar na
      * transferência do XMI para a memória.
      */
-    private void createAndAdd(String fileName, String nameTag, int option) throws ParserConfigurationException,
+    private void createAndAdd(Document doc, String nameTag) throws ParserConfigurationException,
             SAXException, IOException{
-        
-        // Abrir o arquivo XMI
-        File inputFile = new File(fileName);
-        
-        // Criando um documento na memória para poder analisar com o DOMParser
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        Document doc = dBuilder.parse(inputFile);
-        
-        // Normalizando o documento caso haja algum caracter especial
-        // e não dê nenhum erro durante o Parser.
-        doc.getDocumentElement().normalize();
         
         //Criando uma lista com todos os nodos de acordo com a tag Fornecida
         NodeList nList = doc.getElementsByTagName(nameTag);
-        
-        //De acordo com a opção informada se escolhe a operação nesta parte
-        switch (option) {
-            case 1:
-                addElementsAndDiagrams(nList);
-                break;
-            case 2:
-                addAssociations(nList);
-                break;
-            default:
-                break;
-        }
-    }
-    
-    /**
-     * Insere os Elementos e os Diagramas de casos de uso
-     * @param nList - Lista de nodos para fazer a inserção somente
-     * dos elementos ou Diagramas(Escolha devido à sua semelhança pegando
-     * somente o id e label, sendo que estes no documento são referenciados
-     * com o nome do atributo igual).
-     */
-    private void addElementsAndDiagrams(NodeList nList){
-        
+
         // Percorrer toda a lista de nodos criadas anteriormente
         for(int i=0; i<nList.getLength(); i++){
             // Pegando o nodo da "rodada"
@@ -108,20 +74,18 @@ public class ParserXMI {
                     UmlDiagram newDiagramUseCase;
                     newDiagramUseCase = new UseCaseDiagram(getId(eElement), getName(eElement));
                     diagrams.add(newDiagramUseCase);
+                }else if(eElement.getNodeName().equalsIgnoreCase("UML:Association")){
+                    // Como eu eu vou ter que fazer a pesquisa dos elementos
+                    //preciso guardar antes o ID e o nome da associação, devido
+                    //ao meu método se eu chamar na hora que eu for criar a 
+                    //associação vai chamar o id de um elemento que não é este.
+                    String id, name;
+                    UmlAssociation newAssociation;
+                    id = getId(eElement);
+                    name = getName(eElement);
                 }
             }
         }
-    }
-    
-    /**
-     * Método para adicionar as associações,
-     * método separado dos demais devido a sua drástica diferença
-     * dos demais na parte de extração dos dados.
-     * @param nList - Lista de nodos com os elementos Association
-     */
-    private void addAssociations(NodeList nList){
-
-        throw new NotImplementedException();
     }
     
     /**
@@ -149,7 +113,20 @@ public class ParserXMI {
         name = eElement.getAttribute("name");
         return name;
     }
-     
+    
+    /**
+     * Método utilizado para pegar o idref de uma associação,
+     * o idref se refere aos id dos elementos presentes dentro
+     * de uma associação.
+     * @param eElement - Elemento que vai ser extraído o idref
+     * @return - retorna uma String com o ID (idref).
+     */
+    private String getIdref(Element eElement){
+        String idref;
+        idref = eElement.getAttribute("xmi.idref");
+        return idref;
+    }
+    
     /**
      * Construtor padrão. Classe imutável.
      * @param fileName Nome do arquivo a ser interpretado.
@@ -161,13 +138,25 @@ public class ParserXMI {
         
         try {
             
+            // Abrir o arquivo XMI
+            File inputFile = new File(fileName);
+
+            // Criando um documento na memória para poder analisar com o DOMParser
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+
+            // Normalizando o documento caso haja algum caracter especial
+            // e não dê nenhum erro durante o Parser.
+            doc.getDocumentElement().normalize();
+
             // Obs.: Nesta parte é onde se escolhe as operações e
             // também o nome das tags que vão ser procuradas, tanto
             // quanto o nome do arquivo onde ocorrerá as buscas.
-            createAndAdd(fileName, "UML:Model", 1);
-            createAndAdd(fileName, "UML:Actor", 2);
-            createAndAdd(fileName, "UML:UseCase", 2);
-            createAndAdd(fileName, "UML:Association", 3);
+            createAndAdd(doc, "UML:Model");
+            createAndAdd(doc, "UML:Actor");
+            createAndAdd(doc, "UML:UseCase");
+            createAndAdd(doc, "UML:Association");
             
         } catch (Exception ex) {
             Logger.getLogger(ParserXMI.class.getName()).log(Level.SEVERE, null, ex);
@@ -179,7 +168,6 @@ public class ParserXMI {
         //às listas internas do parser. Por ora, partimos da
         //ideia de que só existem 2 tipos de elementos em nossos
         //diagramas.
-        throw new NotImplementedException();
     }
     
     public ArrayList<UmlDiagram> getDiagrams(){

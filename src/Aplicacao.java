@@ -3,7 +3,7 @@ import org.unipampa.xmi.*;
 
 /**
  *
- * @author andersond
+ * @author Yury Alencar
  */
 public class Aplicacao {
     

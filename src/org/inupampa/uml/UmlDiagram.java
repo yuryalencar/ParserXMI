@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
- * @author andersond
+ * @author Yury Alencar
  * Representa um diagrama abstrato da UML. * 
  */
 public abstract class UmlDiagram {
@@ -48,7 +48,7 @@ public abstract class UmlDiagram {
      * exception do tipo DuplicatedElementException.
      * @param e Elemento a ser adicionado
      */
-    public  void AddElement(UmlElement e){
+    public void AddElement(UmlElement e){
         
         for (UmlElement element : elements) {
             if(element.getId().equals(e.getId())){
