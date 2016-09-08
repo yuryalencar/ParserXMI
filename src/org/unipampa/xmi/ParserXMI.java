@@ -54,82 +54,177 @@ public class ParserXMI {
             Node nNode = nList.item(i);
             
             // Verificando o tipo do nodo
-            if(nNode.getNodeType() == Node.ELEMENT_NODE){
+            if(isElementNode(nNode)){
                 //Passo o nodo para Element para poder tirar seus dados.
                 Element eElement = (Element) nNode;
                 
                 //Verifico qual tipo é o elemento
                 if(eElement.getNodeName().equalsIgnoreCase("UML:Actor")){
-                    UmlElement newActor = new ActorElement(getId(eElement), getName(eElement));
-                    diagrams.get(0).AddElement(newActor);
-                //@TODO: Ainda estou bolando algo para que eu possa
-                //usar este método sem setar sempre o primeiro item 
-                //da lista, por enquanto estou lendo somente um diagrama,
-                //mas está faltando ainda ver como vou pegar o diagrama certo
-                //da lista - Elaborando...
+                    addActor(eElement);
                 
                 }else if(eElement.getNodeName().equalsIgnoreCase("UML:UseCase")){
-                    UmlElement newUseCase = new UseCaseElement(getId(eElement), getName(eElement));
-                    diagrams.get(0).AddElement(newUseCase);
-                
+                    addUseCase(eElement);
+                    
                 }else if(eElement.getNodeName().equalsIgnoreCase("UML:Model")){
-                    UmlDiagram newDiagramUseCase;
-                    newDiagramUseCase = new UseCaseDiagram(getId(eElement), getName(eElement));
-                    diagrams.add(newDiagramUseCase);
+                    addModel(eElement);
                     
                 }else if(eElement.getNodeName().equalsIgnoreCase("UML:Association")){
-                    // Como eu eu vou ter que fazer a pesquisa dos elementos
-                    //preciso guardar antes o ID e o nome da associação, devido
-                    //ao meu método se eu chamar na hora que eu for criar a 
-                    //associação vai chamar o id de um elemento que não é este.
-                    String id, name, idrefElementA, idrefElementB;
-                    UmlAssociation newAssociation;
-                    id = getId(eElement);
-                    name = getName(eElement);
-                    
-                    // Crio uma Lista com as conexões contidas dentro do diagrama
-                    //para poder pegar seus atributos e outros elementos.
-                    NodeList nSoons = eElement.getElementsByTagName("UML:Association.connection");
-                    
-                    for(int j=0; j<nSoons.getLength(); j++){
-                        
-                        //Pegando estas conexões uma individualmente da otra para que assim eu possa
-                        //Pegar todos os dados que eu quiser.
-                        Node sNode = nSoons.item(i);
-                        
-                        // Verificando o tipo do nodo
-                        if(sNode.getNodeType() == Node.ELEMENT_NODE){
-                            
-                            Element eeElement = (Element) sNode;
-                            
-                            //Adentrando mais na associação
-                            NodeList nListG = eeElement.getElementsByTagName("UML:AssociationEnd");
-                            
-                            for(int k=0; k<nListG.getLength();k++){
-                                Node gNode = nListG.item(i);
-                                
-                                if(gNode.getNodeType() == Node.ELEMENT_NODE){
-                                    
-                                    Element gElement = (Element) gNode;
-                                    
-                                    // Neste elemento eu pego 
-                                    NodeList gListGrand = gElement.getElementsByTagName("UML:Feature.owner");
-                                    
-                                    // Somente um para cada ASSOCIATIONEND
-                                    idrefElementA = getIdref(gListGrand.item(0));
-                                    
-                                    // Neste elemento eu pego 
-                                    gListGrand = gElement.getElementsByTagName("UML:AssociationEnd.participant");
-                                    
-                                    // Somente um para cada ASSOCIATIONEND
-                                    idrefElementB = getIdref(gListGrand.item(0));
-                                }
-                            }
-                        }
-                    }
+                    addAssociation(eElement);
                 }
             }
         }
+    }
+    
+    /**
+     * Método para adicionar um novo modelo, pegando seu id e nome e o
+     * adiciona na lista de diagramas.
+     * @param eElement - O elemento para que assim tirar seus atributos
+     * necessários para sua criação.
+     */
+    private void addModel(Element eElement){
+        UmlDiagram newDiagramUseCase;
+        newDiagramUseCase = new UseCaseDiagram(getId(eElement), getName(eElement));
+        diagrams.add(newDiagramUseCase);
+    }
+
+    //@TODO: Ainda estou bolando algo para que eu possa
+    //usar este método sem setar sempre o primeiro item 
+    //da lista, por enquanto estou lendo somente um diagrama,
+    //mas está faltando ainda ver como vou pegar o diagrama certo
+    //da lista - Elaborando...
+    
+    /**
+     * Método para criar um Ator e o adiciona dentro da lista de elementos,
+     * lista presente dentro da classe UmlDiagram.
+     * @param eElement - Elemento para que possa retirar seus atributos
+     * necessários para sua criação.
+     */
+    private void addActor(Element eElement){
+        UmlElement newActor = new ActorElement(getId(eElement), getName(eElement));
+        diagrams.get(0).AddElement(newActor);
+    }
+    
+    /**
+     * Método para criar um Caso de uso e o adicionar na lista de elementos,
+     * lista que está contida dentro da classe UmlDiagram.
+     * @param eElement - O elemento do caso de uso para retirar deste elemento
+     * todos os atributos necessários para sua criação e o adiciona.
+     */
+    private void addUseCase(Element eElement){
+        UmlElement newUseCase = new UseCaseElement(getId(eElement), getName(eElement));
+        diagrams.get(0).AddElement(newUseCase);
+    }
+    
+    /**
+     * Método para criar e adicionar uma associação, a lista de associações
+     * esta presente na classe UmlDiagram, para usar ela utilizo a lista presente
+     * nesta classe.
+     * @param eElement - Elemento para que eu possa retirar dele seus atributos
+     * e também retirar os elementos e os dados contidos neles necessários.
+     */
+    private void addAssociation(Element eElement){
+        // Como eu eu vou ter que fazer a pesquisa dos elementos
+        //preciso guardar antes o ID e o nome da associação, devido
+        //ao meu método se eu chamar na hora que eu for criar a 
+        //associação vai chamar o id de um elemento que não é este.
+
+        String id, name, idrefElementA, idrefElementB;
+        UmlAssociation newAssociation;
+        id = getId(eElement);
+        name = getName(eElement);
+
+        // Crio uma Lista com as conexões contidas dentro do diagrama
+        //para poder pegar seus atributos e outros elementos.
+        NodeList nList = eElement.getElementsByTagName("UML:Association.connection");
+        
+        // Como esta tag só se tem uma a cada associação não se faz a necessidade
+        //da utilização de uma estrutura de repetição para fazer a utilização de
+        //todos elementos possíveis.
+        
+        // Pegando a conexão para que eu possa adentrar e pegar todos os dados que
+        //é necessário para a criação de uma associação e o adicionar.
+        Node nNode = nList.item(0);
+
+        // Verificando o tipo do nodo
+        if(isElementNode(nNode)){
+
+            // Transformando ele em um elemento para que se possa manipular e pegar
+            //todos os seus outros elementos e atributos se for necessário.
+            eElement = (Element) nNode;
+
+            // Pegando as associações finais, onde ficam armazenados os dados de
+            //elementos contidos dentro da associação através de um idref, onde
+            //também contem dados relacionados ao elemento que a mesma faz parte
+            //podendo ser utilizado para sua validação.
+            nList = eElement.getElementsByTagName("UML:AssociationEnd");
+
+            for(int i=0; i<nList.getLength();i++){
+
+                nNode = nList.item(i);
+
+                if(isElementNode(nNode)){
+
+                    eElement = (Element) nNode;
+
+                    // Neste elemento eu pego 
+                    NodeList nList1 = eElement.getElementsByTagName("UML:Feature.owner");
+
+                    // Somente um para cada ASSOCIATIONEND
+                    idrefElementA = getIdref(getClassifier(nList1.item(0)));
+
+                    // Neste elemento eu pego 
+                    nList1 = eElement.getElementsByTagName("UML:AssociationEnd.participant");
+
+                    // Somente um para cada ASSOCIATIONEND
+                    idrefElementB = getIdref(getClassifier(nList1.item(0)));
+
+                    newAssociation = new UmlAssociation(id,name,
+                            this.diagrams.get(0).getElement(idrefElementA),
+                            this.diagrams.get(0).getElement(idrefElementB));
+
+                    this.diagrams.get(0).AddAssociation(newAssociation);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Método para pegar o Elemento da tag <UML:Classifier> e assim poder tirar
+     * seu atributo, que é uma referência crucial para conseguir pegar os 
+     * elementos que vão estar contidos dentro de uma associação.(Associados)
+     * @param nNode - Nodo que contém o elemento UML:Classifier.
+     * @return - retorna o elemento classifier para sua manipulação.
+     */
+    private Element getClassifier(Node nNode){
+        
+        // Recebo o nodo e o transformo em elemento para pegar a tag
+        //do Classifier e depois a tranformar em um elemento também e
+        //assim poder pegar seus atributos através de outro método.
+        Element eElement = (Element) nNode;
+        NodeList nList = eElement.getElementsByTagName("UML:Classifier");
+        
+        //Pegando somente o nodo do classifier já que é único.
+        nNode = nList.item(0);
+        
+        if(isElementNode(nNode)){
+            // Transformando em elemento para que se possa retirar seu atributo
+            //e com isso poder enviar à outro método para a extração.
+            eElement = (Element) nNode;
+            
+            return eElement;
+        }
+        
+        return null; // Lançar Exception
+    }
+    
+    /**
+     * Método para verificar se o nodo pode ser convertido
+     * para um Element, verificando assim o seu tipo.
+     * @param nNode - nodo a ser verificado.
+     * @return - true caso seja e false caso o contrário.
+     */
+    private boolean isElementNode(Node nNode){
+        return nNode.getNodeType() == Node.ELEMENT_NODE;
     }
     
     /**
@@ -165,18 +260,9 @@ public class ParserXMI {
      * @param eElement - Elemento que vai ser extraído o idref
      * @return - retorna uma String com o ID (idref).
      */
-    private String getIdref(Node nNode){
-        String idref;
-        
-        Element eElement = (Element) nNode;
-        NodeList nList = eElement.getElementsByTagName("UML:Classifier");
-        
-        //Somente um dentro de cada nodo
-        Element eElement2 = (Element) nList.item(0);
-        
-        idref = eElement2.getAttribute("xmi.idref");
-        
-        //idref = eElement.getAttribute("xmi.idref");
+    private String getIdref(Element eElement){
+        String idref;        
+        idref = eElement.getAttribute("xmi.idref");
         return idref;
     }
     
