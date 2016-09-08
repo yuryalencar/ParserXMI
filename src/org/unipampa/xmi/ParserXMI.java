@@ -1,4 +1,5 @@
 package org.unipampa.xmi;
+//<editor-fold defaultstate="collapsed" desc="Importações">
 
 import java.util.ArrayList;
 import java.io.File;
@@ -16,6 +17,8 @@ import org.inupampa.uml.*;
 import org.xml.sax.SAXException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+//</editor-fold>
+
 /**
  * @author Yury Alencar
  * Esta classe possui os métodos necessários para extrair
@@ -23,8 +26,14 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class ParserXMI {
 
+    //<editor-fold defaultstate="collapsed" desc="Lista de diagramas - Variável da classe">
+    
     private final ArrayList<UmlDiagram> diagrams;
-
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Método que gerencia as criações e adições de elementos, modelos e associações">
+    
     /**
      * Método para criar uma lista de nodos que será
      * utilizada tanto para a pesquisa de diagramas, atores, casos de uso
@@ -75,6 +84,10 @@ public class ParserXMI {
         }
     }
     
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Métodos que criam e adicionam os elementos de um modelo e o próprio modelo">
+    
     /**
      * Método para adicionar um novo modelo, pegando seu id e nome e o
      * adiciona na lista de diagramas.
@@ -114,6 +127,10 @@ public class ParserXMI {
         UmlElement newUseCase = new UseCaseElement(getId(eElement), getName(eElement));
         diagrams.get(0).AddElement(newUseCase);
     }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Método para criar e adicionar uma associação dentro do diagrama">
     
     /**
      * Método para criar e adicionar uma associação, a lista de associações
@@ -188,6 +205,10 @@ public class ParserXMI {
         }
     }
     
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Método getClassifier">
+            
     /**
      * Método para pegar o Elemento da tag <UML:Classifier> e assim poder tirar
      * seu atributo, que é uma referência crucial para conseguir pegar os 
@@ -216,7 +237,10 @@ public class ParserXMI {
         
         return null; // Lançar Exception
     }
-    
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Verificação do tipo de nodo">
+            
     /**
      * Método para verificar se o nodo pode ser convertido
      * para um Element, verificando assim o seu tipo.
@@ -227,6 +251,10 @@ public class ParserXMI {
         return nNode.getNodeType() == Node.ELEMENT_NODE;
     }
     
+    //</editor-fold>    
+
+    //<editor-fold defaultstate="collapsed" desc="Métodos para pegar atributos">
+ 
     /**
      * Método para pegar o ID do elemento,
      * independentemente do mesmo ser associação,
@@ -265,6 +293,21 @@ public class ParserXMI {
         idref = eElement.getAttribute("xmi.idref");
         return idref;
     }
+    
+    //</editor-fold>     
+
+    //<editor-fold defaultstate="collapsed" desc="Método que retorna os diagramas para verificar eficiência">
+    
+
+    public ArrayList<UmlDiagram> getDiagrams(){
+        
+        //@TODO: clonagem dos objetos (ver imutabilidade)
+        return this.diagrams;
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Onde passa o documento para a memória e chama o método de gerenciamento">
     
     /**
      * Construtor padrão. Classe imutável.
@@ -309,10 +352,6 @@ public class ParserXMI {
         //diagramas.
     }
     
-    public ArrayList<UmlDiagram> getDiagrams(){
-        
-        //@TODO: clonagem dos objetos (ver imutabilidade)
-        return this.diagrams;
-    }
+    //</editor-fold>
     
 }

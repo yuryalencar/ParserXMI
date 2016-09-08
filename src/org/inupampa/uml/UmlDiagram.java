@@ -1,13 +1,19 @@
 package org.inupampa.uml;
 
+//<editor-fold defaultstate="collapsed" desc="Importações">
+
 import java.util.ArrayList;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+//</editor-fold>
 
 /**
  * @author Yury Alencar
  * Representa um diagrama abstrato da UML. * 
  */
 public abstract class UmlDiagram {
+    
+    //<editor-fold defaultstate="collapsed" desc="Variáveis do diagrama todas Final para não poderem ser modificadas">
     
     /**
      * Cada diagrama é identificado unicamente 
@@ -30,6 +36,10 @@ public abstract class UmlDiagram {
     private final ArrayList<UmlElement> elements;
     private final ArrayList<UmlAssociation> associations;
     
+    //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="Construtor recebendo todos os dados necessários para sua criação e incialização das listas internas">
+    
     /**
      * Constructor padrão.
      * @param id Identificador do Diagrama
@@ -41,6 +51,10 @@ public abstract class UmlDiagram {
         this.elements = new ArrayList<>();
         this.associations = new ArrayList<>();
     }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Método para pegar um Elemento presente dentro do diagrama">
     
     /**
      * Método para pegar um elemento da lista,
@@ -60,6 +74,26 @@ public abstract class UmlDiagram {
         
         return null; //Lançar exception
     }
+    
+    /**
+     *  Método para pegar uma associação relacionada a um diagrama específico
+     * aquisição feita através do id da mesma.
+     * @param id - String que pode conter números e letras(Único para cada associação).
+     * @return  - Retorna o Objeto da associação.
+     */
+    public UmlAssociation getAssociation(String id){
+        
+        for (UmlAssociation association : associations) {
+            if(association.getId().equals(id))
+                return association;
+        }
+        
+        return null; //Lançar exception
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Métodos de adicionar Elementos e Associações">
     
     /**
      * Adiciona um elemento na lista de elementos do
@@ -113,6 +147,10 @@ public abstract class UmlDiagram {
             System.out.println("");//Lançar exception
     }
     
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Métodos de remoção de elementos e associações">
+    
     /**
      * Exclusão de uma elemento através do seu ID.
      * A escolha do ID veio a partir de saber que cada elemento, só pode
@@ -132,17 +170,16 @@ public abstract class UmlDiagram {
      * Exclusão de uma associação através do seu ID.
      * A escolha do ID veio a partir de saber que cada associação, só pode
      * conter um único.
-     * @param Id - Da associação que quer excluir
-     * Ainda vendo como fazer esta exclusão, provavelmente será modificada,
-     * por uma que recebe o objeto da associação e o pesquisa por ID, ao invés de
-     * receber o ID.
+     * @param id - String do id da associação da associação que quer excluir
      */
-    public void removeAssociation(String Id){
+    public void removeAssociation(String id){
         for (UmlAssociation association : associations) {
-            if(association.getId().equals(Id)){
+            if(association.getId().equals(id)){
                 associations.remove(association);
                 break;
             }
         }
-    }    
+    }
+
+    //</editor-fold>
 }

@@ -7,6 +7,8 @@ package org.inupampa.uml;
  * elementos de diagramas da UML.
  */
 public abstract class UmlElement {
+
+    //<editor-fold defaultstate="collapsed" desc="Variáveis final para não ser possível as modificar">
     
     /**
      * Cada elemento da UML possui um identificador único, chamado
@@ -22,6 +24,10 @@ public abstract class UmlElement {
      */
     private final String label;
     
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Construtor recebendo id e label para sua criação">
+    
     /**
      * Constructor padrão. Classe imutável.
      * @param id Identificador único do objeto
@@ -31,6 +37,10 @@ public abstract class UmlElement {
         this.id = id;
         this.label = label;
     }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Métodos Getter">
     
     /**
      * Getter para o atributo id.
@@ -47,4 +57,7 @@ public abstract class UmlElement {
     public String getLabel(){
         return this.label;
     }
+
+    //</editor-fold>
+    
 }

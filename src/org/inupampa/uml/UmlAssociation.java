@@ -5,8 +5,12 @@
  */
 package org.inupampa.uml;
 
+//<editor-fold defaultstate="collapsed" desc="Importações">
+
 import com.sun.nio.sctp.Association;
 import java.util.Objects;
+
+//</editor-fold>
 
 /**
  * @author Yury Alencar
@@ -14,6 +18,8 @@ import java.util.Objects;
  * da Uml. 
  */
 public class UmlAssociation {
+    
+    //<editor-fold defaultstate="collapsed" desc="Variáveis final para não poderem ser modificadas(id, label, ElementoA, ElementoB)">
     
     /**
      * Cada associação possui um identificador único dentro de
@@ -34,6 +40,10 @@ public class UmlAssociation {
      */
     private final UmlElement a;
     private final UmlElement b;
+
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Construtor padrão para a criação desta classe imutável">
     
     /**
      * Construtor padrão. Classe imutável.
@@ -48,6 +58,10 @@ public class UmlAssociation {
         this.a = a;
         this.b = b;
     }
+
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Métodos Getter">
     
     /**
      * Getter do atributo a
@@ -80,5 +94,7 @@ public class UmlAssociation {
     public String getLabel() {
         return label;
     }
+
+    //</editor-fold>
     
 }
