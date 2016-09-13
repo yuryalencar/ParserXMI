@@ -1,4 +1,5 @@
 package org.unipampa.xmi;
+
 //<editor-fold defaultstate="collapsed" desc="Importações">
 
 import java.util.ArrayList;
@@ -113,8 +114,9 @@ public class ParserXMI {
      * necessários para sua criação.
      */
     private void addActor(Element eElement){
-        UmlElement newActor = new ActorElement(getId(eElement), getName(eElement));
-        diagrams.get(0).AddElement(newActor);
+        String id = getId(eElement);
+        UmlElement newActor = new ActorElement(id, getName(eElement));
+        getDiagram(id).AddElement(newActor);
     }
     
     /**
@@ -124,8 +126,9 @@ public class ParserXMI {
      * todos os atributos necessários para sua criação e o adiciona.
      */
     private void addUseCase(Element eElement){
-        UmlElement newUseCase = new UseCaseElement(getId(eElement), getName(eElement));
-        diagrams.get(0).AddElement(newUseCase);
+        String id = getId(eElement);
+        UmlElement newUseCase = new UseCaseElement(id, getName(eElement));
+        getDiagram(id).AddElement(newUseCase);
     }
     
     //</editor-fold>
@@ -195,14 +198,59 @@ public class ParserXMI {
                     // Somente um para cada ASSOCIATIONEND
                     idrefElementB = getIdref(getClassifier(nList1.item(0)));
 
+                    // Criando um diagrama para nao ficar toda hora realizando uma
+                    // pesquisa dentro da lista.
+                    UmlDiagram diagram = getDiagram(extractId(id));
+                    
                     newAssociation = new UmlAssociation(id,name,
-                            this.diagrams.get(0).getElement(idrefElementA),
-                            this.diagrams.get(0).getElement(idrefElementB));
+                            diagram.getElement(idrefElementA),
+                            diagram.getElement(idrefElementB));
 
-                    this.diagrams.get(0).AddAssociation(newAssociation);
+                    //Para não precisar atualizar o item presente na lista.
+                    getDiagram(extractId(id)).AddAssociation(newAssociation);
                 }
             }
         }
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Métodos getDiagram e extractId">
+
+    /**
+     *  Método para extrair a parte do id que é comum em todo
+     * o documento XMI.
+     * @param id - id que se deseja fazer a extração da parte em comum.
+     * @return - retorna uma String com a tal parte, caso nao esteja no
+     * padrão lança uma exception.
+     */
+    private String extractId(String id){
+        for(int i=0; i<id.length(); i++){
+            if(id.charAt(i) == '-'){
+                id = id.substring(i+1);
+                return id;
+            }
+        }
+        return ""; //Lançar Exception
+    }
+    
+    /**
+     *  Método que pesquisa na lista o diagrama com base no id
+     * extraído no método de extração -extractId-.
+     * @param id - Número identificador sem ter feitor sua extração.
+     * @return - retorna o diagrama caso o encontre, caso contrário lança uma
+     * exception(Falta implementar a Exception).
+     */
+    private UmlDiagram getDiagram(String id){
+        // Retirando a parte em comum para todo o documento
+        id = extractId(id);
+        
+        for (UmlDiagram diagram : diagrams) {
+            if(extractId(diagram.getId()).equals(id)){
+                return diagram;
+            }
+        }
+        return null; //Lançar Exception
     }
     
     //</editor-fold>
@@ -239,7 +287,7 @@ public class ParserXMI {
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Verificação do tipo de nodo">
+    //<editor-fold defaultstate="collapsed" desc="Método de verificação do tipo de nodo">
             
     /**
      * Método para verificar se o nodo pode ser convertido

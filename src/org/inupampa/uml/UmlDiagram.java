@@ -54,6 +54,29 @@ public abstract class UmlDiagram {
     
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="Métodos Getters">
+    
+    /**
+     * Método getter para pegar o id e poder fazer comparações
+     * e com isto encontrar o diagrama a ser adicionado os elementos e
+     * também as suas associações
+     * @return - retorna uma String com o id do Diagrama.
+     */
+    public String getId(){
+        return this.id;
+    }
+    
+    /**
+     * Método para saber o nome do diagrama, pode conter ou não.
+     * Mas caso seja necessário é possível através deste método getter
+     * @return - uma String com o nome do diagrama
+     */
+    public String getNome(){
+        return this.nome;
+    }
+    
+    //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="Método para pegar um Elemento presente dentro do diagrama">
     
     /**
