@@ -2,7 +2,7 @@ package org.inupampa.uml;
 
 /**
  *
- * @author Yury Alencar
+ * @author yuryalencar
  * Represent um elemento de Caso de Uso de um
  * diagrama de caso de uso da UML. 
  */

@@ -7,7 +7,7 @@ package org.inupampa.uml;
 
 /**
  *
- * @author Yury Alencar
+ * @author yuryalencar
  */
 public class UseCaseDiagram extends UmlDiagram{
     

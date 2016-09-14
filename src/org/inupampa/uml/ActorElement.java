@@ -1,7 +1,7 @@
 package org.inupampa.uml;
 
 /**
- * @author Yury Alencar
+ * @author yuryalencar
  * Representa um ator de um diagrama de caso de uso da UML.
  */
 public class ActorElement extends UmlElement{

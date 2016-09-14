@@ -8,7 +8,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 //</editor-fold>
 
 /**
- * @author Yury Alencar
+ * @author yuryalencar
  * Representa um diagrama abstrato da UML. * 
  */
 public abstract class UmlDiagram {

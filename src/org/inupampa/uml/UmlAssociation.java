@@ -13,7 +13,7 @@ import java.util.Objects;
 //</editor-fold>
 
 /**
- * @author Yury Alencar
+ * @author yuryalencar
  * Representa uma associação entre dois elementos 
  * da Uml. 
  */

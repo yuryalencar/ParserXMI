@@ -19,7 +19,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 //</editor-fold>
 /**
- * @author Yury Alencar Esta classe possui os métodos necessários para extrair
+ * @author yuryalencar Esta classe possui os métodos necessários para extrair
  * informações de modelos UML armazenados em arquivos XMI.
  */
 public class ParserXMI {
@@ -402,6 +402,8 @@ public class ParserXMI {
             createAndAdd(doc, "UML:Actor");
             createAndAdd(doc, "UML:UseCase");
             createAndAdd(doc, "UML:Association");
+            createAndAdd(doc, "UML:Include");
+            createAndAdd(doc, "UML:Extend");
 
         } catch (Exception ex) {
             Logger.getLogger(ParserXMI.class.getName()).log(Level.SEVERE, null, ex);

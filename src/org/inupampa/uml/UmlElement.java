@@ -1,7 +1,7 @@
 package org.inupampa.uml;
 
 /**
- * @author Yury Alencar
+ * @author yuryalencar
  * Esta classe representa um elemento genérico da UML, do qual podemos 
  * especializar novos elementos. Possui os atributos comuns a todos os
  * elementos de diagramas da UML.
