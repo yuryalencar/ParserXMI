@@ -8,7 +8,7 @@ package org.inupampa.uml;
  */
 public abstract class UmlElement {
 
-    //<editor-fold defaultstate="collapsed" desc="Variáveis final para não ser possível as modificar">
+    //<editor-fold defaultstate="collapsed" desc="Variáveis">
     
     /**
      * Cada elemento da UML possui um identificador único, chamado
@@ -26,7 +26,7 @@ public abstract class UmlElement {
     
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Construtor recebendo id e label para sua criação">
+    //<editor-fold defaultstate="collapsed" desc="Construtor">
     
     /**
      * Constructor padrão. Classe imutável.

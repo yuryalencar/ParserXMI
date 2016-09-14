@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 public class UmlAssociation {
     
-    //<editor-fold defaultstate="collapsed" desc="Variáveis final para não poderem ser modificadas(id, label, ElementoA, ElementoB)">
+    //<editor-fold defaultstate="collapsed" desc="Variáveis">
     
     /**
      * Cada associação possui um identificador único dentro de
@@ -43,7 +43,7 @@ public class UmlAssociation {
 
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Construtor padrão para a criação desta classe imutável">
+    //<editor-fold defaultstate="collapsed" desc="Construtor padrão">
     
     /**
      * Construtor padrão. Classe imutável.

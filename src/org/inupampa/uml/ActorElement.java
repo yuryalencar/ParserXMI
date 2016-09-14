@@ -5,7 +5,9 @@ package org.inupampa.uml;
  * Representa um ator de um diagrama de caso de uso da UML.
  */
 public class ActorElement extends UmlElement{
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Construtor">
+
     /**
      * Construtor padrão. Classe imutável.
      * @param id Identificador único do objeto
@@ -14,5 +16,7 @@ public class ActorElement extends UmlElement{
     public ActorElement(String id, String label) {
         super(id, label);
     }
+    
+    //</editor-fold>
     
 }

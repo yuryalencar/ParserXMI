@@ -7,6 +7,8 @@ package org.inupampa.uml;
  * diagrama de caso de uso da UML. 
  */
 public class UseCaseElement extends UmlElement{
+
+    //<editor-fold defaultstate="collapsed" desc="Construtor">
     
     /**
      * Construtor padrão. Classe imutável.
@@ -17,4 +19,5 @@ public class UseCaseElement extends UmlElement{
         super(id, label);
     }
     
+    //</editor-fold>
 }

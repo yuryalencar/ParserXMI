@@ -7,6 +7,7 @@ import org.unipampa.xmi.*;
  */
 public class Aplicacao {
     
+    //<editor-fold defaultstate="collapsed" desc="Main">
     
     public static void main(String[] args) {
     
@@ -15,8 +16,8 @@ public class Aplicacao {
             for(UmlDiagram d : parser.getDiagrams()){
                 System.out.println(d.toString());
             }
-            
-        
     }
+    
+    //</editor-fold>
     
 }

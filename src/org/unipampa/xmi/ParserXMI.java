@@ -24,12 +24,14 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class ParserXMI {
 
-    //<editor-fold defaultstate="collapsed" desc="Lista de diagramas - Variável da classe">
+    //<editor-fold defaultstate="collapsed" desc="Variáveis">
+    
     private final ArrayList<UmlDiagram> diagrams;
 
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Método que gerencia as criações e adições de elementos, modelos e associações">
+    //<editor-fold defaultstate="collapsed" desc="Gerenciamento">
+   
     /**
      * Método para criar uma lista de nodos que será utilizada tanto para a
      * pesquisa de diagramas, atores, casos de uso e associações.
@@ -81,7 +83,8 @@ public class ParserXMI {
 
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Métodos que criam e adicionam os elementos de um modelo e o próprio modelo">
+    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar um Modelo">
+    
     /**
      * Método para adicionar um novo modelo, pegando seu id e nome e o adiciona
      * na lista de diagramas.
@@ -95,11 +98,10 @@ public class ParserXMI {
         diagrams.add(newDiagramUseCase);
     }
 
-    //@TODO: Ainda estou bolando algo para que eu possa
-    //usar este método sem setar sempre o primeiro item 
-    //da lista, por enquanto estou lendo somente um diagrama,
-    //mas está faltando ainda ver como vou pegar o diagrama certo
-    //da lista - Elaborando...
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Criar e adicionar Elementos(Actors and UseCases)">
+
     /**
      * Método para criar um Ator e o adiciona dentro da lista de elementos,
      * lista presente dentro da classe UmlDiagram.
@@ -128,7 +130,8 @@ public class ParserXMI {
 
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Método para criar e adicionar uma associação dentro do diagrama">
+    //<editor-fold defaultstate="collapsed" desc="Criar, Adicionar e Verificar Associações">
+    
     /**
      * Método para criar e adicionar uma associação, a lista de associações esta
      * presente na classe UmlDiagram, para usar ela utilizo a lista presente
@@ -231,9 +234,50 @@ public class ParserXMI {
         return idref.equals(idAssociation);
     }
 
+    /**
+     * Método para pegar o Elemento da tag <UML:Classifier> e assim poder tirar
+     * seu atributo, que é uma referência crucial para conseguir pegar os
+     * elementos que vão estar contidos dentro de uma associação.(Associados)
+     *
+     * @param nNode - Nodo que contém o elemento UML:Classifier.
+     * @return - retorna o elemento classifier para sua manipulação.
+     */
+    private Element getClassifier(Node nNode) {
+
+        // Recebo o nodo e o transformo em elemento para pegar a tag
+        //do Classifier e depois a tranformar em um elemento também e
+        //assim poder pegar seus atributos através de outro método.
+        Element eElement = (Element) nNode;
+        NodeList nList = eElement.getElementsByTagName("UML:Classifier");
+
+        //Pegando somente o nodo do classifier já que é único.
+        nNode = nList.item(0);
+
+        if (isElementNode(nNode)) {
+            // Transformando em elemento para que se possa retirar seu atributo
+            //e com isso poder enviar à outro método para a extração.
+            eElement = (Element) nNode;
+
+            return eElement;
+        }
+
+        return null; // Lançar Exception
+    }
+
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Métodos getDiagram e extractId">
+    //Implementar
+    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar Include">
+    
+    //</editor-fold>
+    
+    //Implementar
+    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar Extend">
+    
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Busca de diagrama e extração de ID">
+    
     /**
      * Método para extrair a parte do id que é comum em todo o documento XMI.
      *
@@ -273,39 +317,8 @@ public class ParserXMI {
 
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Método getClassifier">
-    /**
-     * Método para pegar o Elemento da tag <UML:Classifier> e assim poder tirar
-     * seu atributo, que é uma referência crucial para conseguir pegar os
-     * elementos que vão estar contidos dentro de uma associação.(Associados)
-     *
-     * @param nNode - Nodo que contém o elemento UML:Classifier.
-     * @return - retorna o elemento classifier para sua manipulação.
-     */
-    private Element getClassifier(Node nNode) {
-
-        // Recebo o nodo e o transformo em elemento para pegar a tag
-        //do Classifier e depois a tranformar em um elemento também e
-        //assim poder pegar seus atributos através de outro método.
-        Element eElement = (Element) nNode;
-        NodeList nList = eElement.getElementsByTagName("UML:Classifier");
-
-        //Pegando somente o nodo do classifier já que é único.
-        nNode = nList.item(0);
-
-        if (isElementNode(nNode)) {
-            // Transformando em elemento para que se possa retirar seu atributo
-            //e com isso poder enviar à outro método para a extração.
-            eElement = (Element) nNode;
-
-            return eElement;
-        }
-
-        return null; // Lançar Exception
-    }
-    //</editor-fold>
-
-    //<editor-fold defaultstate="collapsed" desc="Método de verificação do tipo de nodo">
+    //<editor-fold defaultstate="collapsed" desc="Verificar tipo do nodo">
+    
     /**
      * Método para verificar se o nodo pode ser convertido para um Element,
      * verificando assim o seu tipo.
@@ -319,7 +332,8 @@ public class ParserXMI {
 
     //</editor-fold>    
     
-    //<editor-fold defaultstate="collapsed" desc="Métodos para pegar atributos">
+    //<editor-fold defaultstate="collapsed" desc="getId, getName, getIdref">
+    
     /**
      * Método para pegar o ID do elemento, independentemente do mesmo ser
      * associação, UseCase, Actor, ou até mesmo o diagrama.
@@ -361,7 +375,8 @@ public class ParserXMI {
 
     //</editor-fold>     
     
-    //<editor-fold defaultstate="collapsed" desc="Método que retorna os diagramas para verificar eficiência">
+    //<editor-fold defaultstate="collapsed" desc="getDiagrams">
+    
     public ArrayList<UmlDiagram> getDiagrams() {
 
         //@TODO: clonagem dos objetos (ver imutabilidade)
@@ -370,7 +385,8 @@ public class ParserXMI {
 
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Onde passa o documento para a memória e chama o método de gerenciamento">
+    //<editor-fold defaultstate="collapsed" desc="Passa o documento pra memória e chama o gerenciamento">
+    
     /**
      * Construtor padrão. Classe imutável.
      *

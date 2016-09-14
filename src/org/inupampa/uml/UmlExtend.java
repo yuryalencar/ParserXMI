@@ -10,7 +10,9 @@ package org.inupampa.uml;
  * @author yuryalencar
  */
 public class UmlExtend extends UmlAssociation{
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Construtor">
+
     /**
      *  Construtor para criar um extend que é uma extensão de uma
      * associação.
@@ -22,4 +24,6 @@ public class UmlExtend extends UmlAssociation{
     public UmlExtend(String id, String label, UmlElement a, UmlElement b){
         super(id, label, a, b);
     }
+    
+    //</editor-fold>
 }

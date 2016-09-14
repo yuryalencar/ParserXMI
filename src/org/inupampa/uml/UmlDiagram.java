@@ -13,7 +13,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public abstract class UmlDiagram {
     
-    //<editor-fold defaultstate="collapsed" desc="Variáveis do diagrama todas Final para não poderem ser modificadas">
+    //<editor-fold defaultstate="collapsed" desc="Variáveis">
     
     /**
      * Cada diagrama é identificado unicamente 
@@ -38,7 +38,7 @@ public abstract class UmlDiagram {
     
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Construtor recebendo todos os dados necessários para sua criação e incialização das listas internas">
+    //<editor-fold defaultstate="collapsed" desc="Construtor">
     
     /**
      * Constructor padrão.
@@ -54,7 +54,7 @@ public abstract class UmlDiagram {
     
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Métodos Getters">
+    //<editor-fold defaultstate="collapsed" desc="Métodos Getters(Atributos)">
     
     /**
      * Método getter para pegar o id e poder fazer comparações
@@ -77,7 +77,7 @@ public abstract class UmlDiagram {
     
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Método para pegar um Elemento presente dentro do diagrama">
+    //<editor-fold defaultstate="collapsed" desc="Método getElement">
     
     /**
      * Método para pegar um elemento da lista,
@@ -116,7 +116,7 @@ public abstract class UmlDiagram {
     
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Métodos de adicionar Elementos e Associações">
+    //<editor-fold defaultstate="collapsed" desc="Adicionar Elementos e Associações">
     
     /**
      * Adiciona um elemento na lista de elementos do
@@ -172,7 +172,7 @@ public abstract class UmlDiagram {
     
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Métodos de remoção de elementos e associações">
+    //<editor-fold defaultstate="collapsed" desc="Remoção de elementos e associações">
     
     /**
      * Exclusão de uma elemento através do seu ID.
