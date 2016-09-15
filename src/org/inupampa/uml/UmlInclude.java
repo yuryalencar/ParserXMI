@@ -9,7 +9,7 @@ package org.inupampa.uml;
  *
  * @author yuryalencar
  */
-public class UmlInclude extends UmlAssociation {
+public class UmlInclude extends UmlDependency {
 
     //<editor-fold defaultstate="collapsed" desc="Construtor">
 
