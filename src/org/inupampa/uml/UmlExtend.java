@@ -18,11 +18,11 @@ public class UmlExtend extends UmlDependency{
      * associação.
      * @param id - que se refere ao include
      * @param label - que se refere ao extend(Opcional)
-     * @param a - Elemento A(Que ja deve conter na lista de elementos do diagrama)
-     * @param b - Elemento B(Que ja deve conter na lista de elementos do diagrama) 
+     * @param base - Elemento A(Que ja deve conter na lista de elementos do diagrama)
+     * @param extension - Elemento B(Que ja deve conter na lista de elementos do diagrama) 
      */
-    public UmlExtend(String id, String label, UmlElement a, UmlElement b){
-        super(id, label, a, b);
+    public UmlExtend(String id, String label, UmlElement base, UmlElement extension){
+        super(id, label, base, extension);
     }
     
     //</editor-fold>

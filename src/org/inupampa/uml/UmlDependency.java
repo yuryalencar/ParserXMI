@@ -30,8 +30,8 @@ public class UmlDependency {
      * A ou como elemento B. Não existe distinção entre qual elemento
      * ocorre primeiro (i.e. não há relação de ordem)
      */
-    private final UmlElement a;
-    private final UmlElement b;
+    private final UmlElement base;
+    private final UmlElement dependent;
 
     //</editor-fold>
     
@@ -41,14 +41,14 @@ public class UmlDependency {
      * Construtor padrão. Classe imutável.
      * @param id - Número identificador único da associação
      * @param label - Label da associação, (Opcional)
-     * @param a - Elemento que pertence associação
-     * @param b - Outro elemento que pertence à associação
+     * @param base - Elemento que pertence associação
+     * @param dependent - Outro elemento que pertence à associação
      */
-    public UmlDependency(String id, String label, UmlElement a, UmlElement b){
+    public UmlDependency(String id, String label, UmlElement base, UmlElement dependent){
         this.id = id;
         this.label = label;
-        this.a = a;
-        this.b = b;
+        this.base = base;
+        this.dependent = dependent;
     }
 
     //</editor-fold>
@@ -56,19 +56,19 @@ public class UmlDependency {
     //<editor-fold defaultstate="collapsed" desc="Métodos Getter">
     
     /**
-     * Getter do atributo a
-     * @return a
+     * Getter do atributo base
+     * @return base
      */
-    public UmlElement getA(){
-        return this.a;
+    public UmlElement getBase(){
+        return this.base;
     }
     
     /**
-     * Getter do atributo b
-     * @return b
+     * Getter do atributo dependent
+     * @return dependent
      */
-    public UmlElement getB(){
-        return this.b;
+    public UmlElement getDependent(){
+        return this.dependent;
     }
 
     /**

@@ -18,11 +18,11 @@ public class UmlInclude extends UmlDependency {
      * associação.
      * @param id - que se refere ao include
      * @param label - que se refere ao include(Opcional)
-     * @param a - Elemento A(Que ja deve conter na lista de elementos do diagrama)
-     * @param b - Elemento B(Que ja deve conter na lista de elementos do diagrama) 
+     * @param base - Elemento A(Que ja deve conter na lista de elementos do diagrama)
+     * @param addition - Elemento B(Que ja deve conter na lista de elementos do diagrama) 
      */
-    public UmlInclude(String id, String label, UmlElement a, UmlElement b){
-        super(id, label, a, b);
+    public UmlInclude(String id, String label, UmlElement base, UmlElement addition){
+        super(id, label, base, addition);
     }
     
     //</editor-fold>

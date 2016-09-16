@@ -35,6 +35,7 @@ public abstract class UmlDiagram {
      */
     private final ArrayList<UmlElement> elements;
     private final ArrayList<UmlAssociation> associations;
+    private final ArrayList<UmlDependency> dependencies;
     
     //</editor-fold>
 
@@ -50,6 +51,7 @@ public abstract class UmlDiagram {
         this.nome = nome;
         this.elements = new ArrayList<>();
         this.associations = new ArrayList<>();
+        this.dependencies = new ArrayList<>();
     }
     
     //</editor-fold>
@@ -116,7 +118,7 @@ public abstract class UmlDiagram {
     
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Adicionar Elementos e Associações">
+    //<editor-fold defaultstate="collapsed" desc="Adicionar Elementos, Associações e Dependências">
     
     /**
      * Adiciona um elemento na lista de elementos do
@@ -169,6 +171,41 @@ public abstract class UmlDiagram {
         else
             System.out.println("");//Lançar exception
     }
+
+    /**
+     * Adiciona uma dependência na lista de dependências do
+     * diagrama. Se a dependência já existir, dispara uma 
+     * exception do tipo DuplicatedAssociationException.
+     * Se os elementos que compõem a dependência não fizerem
+     * parte do diagrama, dispara uma exceção do tipo
+     * InconsistentAssociationException.
+     * @param a Dependência a ser adicionada.
+     */
+    public void AddDependency(UmlDependency a){
+        boolean existA = false;
+        boolean existB = false;
+        
+        for (UmlDependency dependency : dependencies) {
+            if(dependency.getId().equals(a.getId())){
+                // Lançar exception
+            }
+        }
+        
+        for (UmlElement element : elements) {
+            if(a.getBase().getId().equals(element.getId())){
+                existA = true;
+            }
+            
+            if(a.getDependent().getId().equals(element.getId())){
+                existB = true;
+            }
+        }
+
+        if(existA && existB)
+            dependencies.add(a);
+        else
+            System.out.println("");//Lançar exception
+    }
     
     //</editor-fold>
     
@@ -199,6 +236,21 @@ public abstract class UmlDiagram {
         for (UmlAssociation association : associations) {
             if(association.getId().equals(id)){
                 associations.remove(association);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Exclusão de uma dependência através do seu ID.
+     * A escolha do ID veio a partir de saber que cada dependência, só pode
+     * conter um único.
+     * @param id - String do id da associação da dependência que quer excluir
+     */
+    public void removeDependencies(String id){
+        for (UmlDependency dependency : dependencies) {
+            if(dependency.getId().equals(id)){
+                dependencies.remove(dependency);
                 break;
             }
         }
