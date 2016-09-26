@@ -1,6 +1,7 @@
 package org.unipampa.xmi;
 
 //<editor-fold defaultstate="collapsed" desc="Importações">
+
 import java.util.ArrayList;
 import java.io.File;
 import java.io.IOException;
@@ -23,13 +24,69 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * informações de modelos UML armazenados em arquivos XMI.
  */
 public class ParserXMI {
-
+        
     //<editor-fold defaultstate="collapsed" desc="Variáveis">
     
     private final ArrayList<UmlDiagram> diagrams;
 
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="Documento na memória">
+    
+    /**
+     * Construtor padrão. Classe imutável.
+     *
+     * @param fileName Nome do arquivo a ser interpretado.
+     */
+    public ParserXMI(String fileName) {
+
+        
+        //Inicialização das listas internas
+        this.diagrams = new ArrayList<>();
+
+        try {
+
+            // Abrir o arquivo XMI
+            File inputFile = new File(fileName);
+
+            // Criando um documento na memória para poder analisar com o DOMParser
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(inputFile);
+
+            // Normalizando o documento caso haja algum caracter especial
+            // e não dê nenhum erro durante o Parser.
+            doc.getDocumentElement().normalize();
+
+            // Obs.: Nesta parte é onde se escolhe as operações e
+            // também o nome das tags que vão ser procuradas, tanto
+            // quanto o nome do arquivo onde ocorrerá as buscas.
+            
+            // A Ordem importa, ou seja, primeiro tem que ser sempre adicionados
+            //os modelos e a partir deles os elementos, em seguida as associações e
+            //dependencias.
+            createAndAdd(doc, "UML:Model");
+            createAndAdd(doc, "UML:Actor");
+            createAndAdd(doc, "UML:UseCase");
+            createAndAdd(doc, "UML:Association");
+            createAndAdd(doc, "UML:Include");
+            createAndAdd(doc, "UML:Extend");
+            createAndAdd(doc, "UML:Generalization");
+
+        } catch (Exception ex) {
+            Logger.getLogger(ParserXMI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        //@TODO: Realizar a abertura do arquivo e parsing
+        //das estruturas de dados. Na medida em que as 
+        //estruturas foram descobertas, adicioná-las 
+        //às listas internas do parser. Por ora, partimos da
+        //ideia de que só existem 2 tipos de elementos em nossos
+        //diagramas.
+    }
+
+    //</editor-fold>
+
     //<editor-fold defaultstate="collapsed" desc="Gerenciamento">
    
     /**
@@ -57,6 +114,7 @@ public class ParserXMI {
         if(nList.getLength() != 0){
             // Percorrer toda a lista de nodos criadas anteriormente
             for (int i = 0; i < nList.getLength(); i++) {
+                
                 // Pegando o nodo da "rodada"
                 Node nNode = nList.item(i);
 
@@ -66,25 +124,33 @@ public class ParserXMI {
                     Element eElement = (Element) nNode;
 
                     //Verifico qual tipo é o elemento
-                    if (eElement.getNodeName().equalsIgnoreCase("UML:Actor")) {
-                        addActor(eElement);
-
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:UseCase")) {
-                        addUseCase(eElement);
-
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Model")) {
+                    
+                    if (eElement.getNodeName().equalsIgnoreCase("UML:Model") 
+                            && !(getId(eElement).equals(""))) {
                         addModel(eElement);
 
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Association")) {
+                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Actor") 
+                            && !(getId(eElement).equals(""))) {
+                        addActor(eElement);
+
+                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:UseCase") 
+                            && !(getId(eElement).equals(""))) {
+                        addUseCase(eElement);
+
+                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Association") 
+                            && !(getId(eElement).equals(""))) {
                         addAssociation(eElement);
 
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Include")){
+                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Include") 
+                            && !(getId(eElement).equals(""))){
                         addInclude(eElement);
 
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Extend")){
+                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Extend") 
+                            && !(getId(eElement).equals(""))){
                         addExtend(eElement);
                         
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Generalization")){
+                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Generalization") 
+                            && !(getId(eElement).equals(""))){
                         addGeneralization(eElement);
                     }
                 }
@@ -152,72 +218,71 @@ public class ParserXMI {
      * e também retirar os elementos e os dados contidos neles necessários.
      */
     private void addAssociation(Element eElement) {
+    
         // Como eu eu vou ter que fazer a pesquisa dos elementos
         //preciso guardar antes o ID e o nome da associação, devido
-        //ao meu método se eu chamar na hora que eu for criar a 
-        //associação vai chamar o id de um elemento que não é este.
+        //que ao fazer isto posteriormente pegarei dados errados por 
+        //por causa da reutilização de variáveis.
 
         String id, name, idrefElementA, idrefElementB;
-        UmlAssociation newAssociation;
+        UmlAssociation newAssociation; //Associação que vai ser criada e adicionada ao diagrama
         id = getId(eElement);
         name = getName(eElement);
 
-        // Crio uma Lista com as conexões contidas dentro do diagrama
-        //para poder pegar seus atributos e outros elementos.
-        NodeList nList = eElement.getElementsByTagName("UML:Association.connection");
+        // Crio uma Lista com as conexões finais contidas dentro do diagrama
+        //para poder pegar as referência dos elementos de outros elementos.
+        NodeList nList = eElement.getElementsByTagName("UML:AssociationEnd");
 
-        // Como esta tag só se tem uma a cada associação não se faz a necessidade
-        //da utilização de uma estrutura de repetição para fazer a utilização de
-        //todos elementos possíveis.
-        // Pegando a conexão para que eu possa adentrar e pegar todos os dados que
-        //é necessário para a criação de uma associação e o adicionar.
-        Node nNode = nList.item(0);
+        // Como esta tag tem 2 em cada associação, mas não se faz a necessidade
+        //da utilização de ambas, pois somente em uma já contem todos os dados
+        //tendo em vista que em uma Association não importa a ordem dos elmentos
+        //pegar somente o primeiro nodo é uma melhor opção, já que os dois contem
+        //as mesmas referências do elementos.
+        
+        if(nList.getLength() != 0){
+            Node nNode = nList.item(0);
 
-        // Verificando o tipo do nodo
-        if (isElementNode(nNode)) {
+            // Verificando o tipo do nodo
+            if (isElementNode(nNode)) {
 
-            // Transformando ele em um elemento para que se possa manipular e pegar
-            //todos os seus outros elementos e atributos se for necessário.
-            eElement = (Element) nNode;
+                // Transformando ele em um elemento para que se possa manipular e pegar
+                //todos os seus outros elementos e atributos se for necessário.
+                eElement = (Element) nNode;
 
-            // Pegando as associações finais, onde ficam armazenados os dados de
-            //elementos contidos dentro da associação através de um idref, onde
-            //também contem dados relacionados ao elemento que a mesma faz parte
-            //podendo ser utilizado para sua validação.
-            nList = eElement.getElementsByTagName("UML:AssociationEnd");
+                // Verificando se a associação END realmente pertence à tag que a engloba 
+                if (verifyAssociation(eElement, id)) {
 
-            if (verifyAssociation(eElement, id)) {
+                    if (isElementNode(nList.item(0))) {
 
-                if (isElementNode(nList.item(0))) {
+                        eElement = (Element) nList.item(0);
 
-                    eElement = (Element) nList.item(0);
+                        // Neste elemento eu pego o proprietário da associação
+                        nList = eElement.getElementsByTagName("UML:Feature.owner");
+                        
+                        // Somente um para cada ASSOCIATIONEND
+                        idrefElementA = getIdref(getClassifier(nList.item(0)));
 
-                    // Neste elemento eu pego 
-                    nList = eElement.getElementsByTagName("UML:Feature.owner");
+                        // Neste elemento eu pego 
+                        nList = eElement.getElementsByTagName("UML:AssociationEnd.participant");
 
-                    // Somente um para cada ASSOCIATIONEND
-                    idrefElementA = getIdref(getClassifier(nList.item(0)));
+                        // Somente um para cada ASSOCIATIONEND
+                        idrefElementB = getIdref(getClassifier(nList.item(0)));
 
-                    // Neste elemento eu pego 
-                    nList = eElement.getElementsByTagName("UML:AssociationEnd.participant");
+                        // Criando um diagrama para nao ficar toda hora realizando uma
+                        // pesquisa dentro da lista.
+                        UmlDiagram diagram = getDiagram(extractId(id));
 
-                    // Somente um para cada ASSOCIATIONEND
-                    idrefElementB = getIdref(getClassifier(nList.item(0)));
+                        newAssociation = new UmlAssociation(id, name,
+                                diagram.getElement(idrefElementA),
+                                diagram.getElement(idrefElementB));
 
-                    // Criando um diagrama para nao ficar toda hora realizando uma
-                    // pesquisa dentro da lista.
-                    UmlDiagram diagram = getDiagram(extractId(id));
-
-                    newAssociation = new UmlAssociation(id, name,
-                            diagram.getElement(idrefElementA),
-                            diagram.getElement(idrefElementB));
-
-                    //Para não precisar atualizar o item presente na lista.
-                    diagram.AddAssociation(newAssociation);
+                        //Para não precisar atualizar o item presente na lista.
+                        diagram.AddAssociation(newAssociation);
+                    }
+                } else {
+                    //Lançar uma exception
                 }
-            } else {
-                //Lançar uma exception
-            }
+            }            
         }
     }
 
@@ -236,15 +301,18 @@ public class ParserXMI {
 
         NodeList nList = eElement.getElementsByTagName("UML:Association");
 
-        if (isElementNode(nList.item(0))) {
-            eElement = (Element) nList.item(0);
+        if(nList.getLength() != 0){
+            if (isElementNode(nList.item(0))) {
+                eElement = (Element) nList.item(0);
 
-            idref = getIdref(eElement);
+                idref = getIdref(eElement);
+                return idref.equals(idAssociation);
+            }
         }
-
-        return idref.equals(idAssociation);
+    
+        return idref.equals(idAssociation);//LançarException
     }
-
+                
     /**
      * Método para pegar o Elemento da tag <UML:Classifier> e assim poder tirar
      * seu atributo, que é uma referência crucial para conseguir pegar os
@@ -261,17 +329,18 @@ public class ParserXMI {
         Element eElement = (Element) nNode;
         NodeList nList = eElement.getElementsByTagName("UML:Classifier");
 
-        //Pegando somente o nodo do classifier já que é único.
-        nNode = nList.item(0);
+        if(nList.getLength() != 0){
+            //Pegando somente o nodo do classifier já que é único.
+            nNode = nList.item(0);
 
-        if (isElementNode(nNode)) {
-            // Transformando em elemento para que se possa retirar seu atributo
-            //e com isso poder enviar à outro método para a extração.
-            eElement = (Element) nNode;
+            if (isElementNode(nNode)) {
+                // Transformando em elemento para que se possa retirar seu atributo
+                //e com isso poder enviar à outro método para a extração.
+                eElement = (Element) nNode;
 
-            return eElement;
+                return eElement;
+            }
         }
-
         return null; // Lançar Exception
     }
 
@@ -289,8 +358,6 @@ public class ParserXMI {
         String id = getId(eElement), label = getName(eElement), idChild="", idParent="";
         UmlDiagram diagram;
         UmlGeneralization newGeneralization;
-        UmlElement child, parent;
-        
         
         NodeList nList = eElement.getElementsByTagName("UML:Generalization.child");
         
@@ -313,8 +380,7 @@ public class ParserXMI {
         diagram = getDiagram(id);
         
         newGeneralization = new UmlGeneralization(id, label,
-                parent = diagram.getElement(idParent), 
-                child = diagram.getElement(idChild));
+                diagram.getElement(idParent), diagram.getElement(idChild));
         
         diagram.AddDependency(newGeneralization);
     }
@@ -331,14 +397,13 @@ public class ParserXMI {
     public String getGeneralizableElement(NodeList nList){
         String idGeneralization;
         
-        
         if(isElementNode(nList.item(0))){
             
             Element eElement = (Element) nList.item(0);
             
             nList = eElement.getElementsByTagName("UML:GeneralizableElement");
             
-            if(nList.getLength() != 0){
+            if(nList.getLength() != 0 && isElementNode((Element) nList.item(0))){
                 idGeneralization = getIdref((Element) nList.item(0));
                 return idGeneralization;
             } else {
@@ -351,7 +416,6 @@ public class ParserXMI {
     
     //</editor-fold>
     
-    //Adicionar um método para a parte de extração dos dados
     //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar Include">
 
     /**
@@ -368,18 +432,26 @@ public class ParserXMI {
         
         NodeList nList = eElement.getElementsByTagName("UML:Include.base");
         
-        if(isElementNode(nList.item(0))){
-            idrefBase = getIdref(getUseCase((Element) nList.item(0)));
+        if(nList.getLength() != 0){
+            if(isElementNode(nList.item(0)))
+                idrefBase = getIdref(getTagUseCase((Element) nList.item(0)));
+        } else {
+            //lançar exception
         }
         
+        
         nList = eElement.getElementsByTagName("UML:Include.addition");
-        if(isElementNode(nList.item(0))){
-            idrefAddition = getIdref(getUseCase((Element) nList.item(0)));
+
+        if(nList.getLength() != 0){
+            if(isElementNode(nList.item(0)))
+                idrefAddition = getIdref(getTagUseCase((Element) nList.item(0)));
+        } else {
+            //lançar exception
         }
         
         // Criando um diagrama para nao ficar toda hora realizando uma
         // pesquisa dentro da lista.
-        UmlDiagram diagram = getDiagram(extractId(idInclude));
+        UmlDiagram diagram = getDiagram(idInclude);
 
         UmlInclude newInclude = new UmlInclude(idInclude, nameInclude,
             diagram.getElement(idrefBase),
@@ -407,18 +479,25 @@ public class ParserXMI {
         
         NodeList nList = eElement.getElementsByTagName("UML:Extend.base");
         
-        if(isElementNode(nList.item(0))){
-            idrefBase = getIdref(getUseCase((Element) nList.item(0)));
+        if(nList.getLength() != 0){
+            if(isElementNode(nList.item(0)))
+                idrefBase = getIdref(getTagUseCase((Element) nList.item(0)));
+        } else{
+            //lançar exception
         }
-        
+            
         nList = eElement.getElementsByTagName("UML:Extend.extension");
-        if(isElementNode(nList.item(0))){
-            idrefExtension = getIdref(getUseCase((Element) nList.item(0)));
+        
+        if(nList.getLength() != 0){
+            if(isElementNode(nList.item(0)))
+                idrefExtension = getIdref(getTagUseCase((Element) nList.item(0)));
+        } else {
+            //lançar exception
         }
         
         // Criando um diagrama para nao ficar toda hora realizando uma
         // pesquisa dentro da lista.
-        UmlDiagram diagram = getDiagram(extractId(idExtend));
+        UmlDiagram diagram = getDiagram(idExtend);
 
         UmlExtend newExtend = new UmlExtend(idExtend, nameExtend,
                 diagram.getElement(idrefBase),
@@ -440,6 +519,7 @@ public class ParserXMI {
      * lança uma exception.
      */
     private String extractId(String id) {
+    
         for (int i = 0; i < id.length(); i++) {
             if (id.charAt(i) == '-') {
                 id = id.substring(i + 1);
@@ -466,6 +546,7 @@ public class ParserXMI {
                 return diagram;
             }
         }
+        
         return null; //Lançar Exception
     }
 
@@ -486,7 +567,7 @@ public class ParserXMI {
 
     //</editor-fold>    
     
-    //<editor-fold defaultstate="collapsed" desc="getId, getName, getIdref, getUseCase">
+    //<editor-fold defaultstate="collapsed" desc="getId, getName, getIdref, getTagUseCase">
     
     /**
      * Método para pegar o ID do elemento, independentemente do mesmo ser
@@ -533,13 +614,16 @@ public class ParserXMI {
      * @param eElement - Elemento que contém o elemento UML:UseCase
      * @return - retorna o Elemento UML:UseCase
      */
-    private Element getUseCase(Element eElement){
+    private Element getTagUseCase(Element eElement){
         NodeList nList = eElement.getElementsByTagName("UML:UseCase");
         
-        if(isElementNode(nList.item(0)))
-            return (Element) nList.item(0);
-        return null;
+        if(nList.getLength() != 0)
+            if(isElementNode(nList.item(0)))
+                return (Element) nList.item(0);
+        
+        return null; //LançarException
     }
+    
     //</editor-fold>     
     
     //<editor-fold defaultstate="collapsed" desc="getDiagrams">
@@ -548,61 +632,6 @@ public class ParserXMI {
 
         //@TODO: clonagem dos objetos (ver imutabilidade)
         return this.diagrams;
-    }
-
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="Passa o documento pra memória e chama o gerenciamento">
-    
-    /**
-     * Construtor padrão. Classe imutável.
-     *
-     * @param fileName Nome do arquivo a ser interpretado.
-     */
-    public ParserXMI(String fileName) {
-
-        //Inicialização das listas internas
-        this.diagrams = new ArrayList<>();
-
-        try {
-
-            // Abrir o arquivo XMI
-            File inputFile = new File(fileName);
-
-            // Criando um documento na memória para poder analisar com o DOMParser
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(inputFile);
-
-            // Normalizando o documento caso haja algum caracter especial
-            // e não dê nenhum erro durante o Parser.
-            doc.getDocumentElement().normalize();
-
-            // Obs.: Nesta parte é onde se escolhe as operações e
-            // também o nome das tags que vão ser procuradas, tanto
-            // quanto o nome do arquivo onde ocorrerá as buscas.
-            
-            // A Ordem importa, ou seja, primeiro tem que ser sempre adicionados
-            //os modelos e a partir deles os elementos, em seguida as associações e
-            //dependencias.
-            createAndAdd(doc, "UML:Model");
-            createAndAdd(doc, "UML:Actor");
-            createAndAdd(doc, "UML:UseCase");
-            createAndAdd(doc, "UML:Association");
-            createAndAdd(doc, "UML:Include");
-            createAndAdd(doc, "UML:Extend");
-            createAndAdd(doc, "UML:Generalization");
-
-        } catch (Exception ex) {
-            Logger.getLogger(ParserXMI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        //@TODO: Realizar a abertura do arquivo e parsing
-        //das estruturas de dados. Na medida em que as 
-        //estruturas foram descobertas, adicioná-las 
-        //às listas internas do parser. Por ora, partimos da
-        //ideia de que só existem 2 tipos de elementos em nossos
-        //diagramas.
     }
 
     //</editor-fold>
