@@ -189,7 +189,7 @@ public class ParserXMI {
     private void addActor(Element eElement) {
         String id = getId(eElement);
         UmlElement newActor = new ActorElement(id, getName(eElement));
-        getDiagram(id).AddElement(newActor);
+        getDiagram(id).addElement(newActor);
     }
 
     /**
@@ -202,7 +202,7 @@ public class ParserXMI {
     private void addUseCase(Element eElement) {
         String id = getId(eElement);
         UmlElement newUseCase = new UseCaseElement(id, getName(eElement));
-        getDiagram(id).AddElement(newUseCase);
+        getDiagram(id).addElement(newUseCase);
     }
 
     //</editor-fold>
@@ -224,7 +224,7 @@ public class ParserXMI {
         //que ao fazer isto posteriormente pegarei dados errados por 
         //por causa da reutilização de variáveis.
 
-        String id, name, idrefElementA, idrefElementB;
+        String id, name, idrefElementA="", idrefElementB="";
         UmlAssociation newAssociation; //Associação que vai ser criada e adicionada ao diagrama
         id = getId(eElement);
         name = getName(eElement);
@@ -259,15 +259,21 @@ public class ParserXMI {
                         // Neste elemento eu pego o proprietário da associação
                         nList = eElement.getElementsByTagName("UML:Feature.owner");
                         
-                        // Somente um para cada ASSOCIATIONEND
-                        idrefElementA = getIdref(getClassifier(nList.item(0)));
-
+                        if(nList.getLength() != 0){
+                            // Somente um para cada ASSOCIATIONEND
+                            idrefElementA = getIdref(getClassifier(nList.item(0)));
+                        } else {
+                            //Lançar exception
+                        }
                         // Neste elemento eu pego 
                         nList = eElement.getElementsByTagName("UML:AssociationEnd.participant");
 
-                        // Somente um para cada ASSOCIATIONEND
-                        idrefElementB = getIdref(getClassifier(nList.item(0)));
-
+                        if(nList.getLength() != 0){
+                            // Somente um para cada ASSOCIATIONEND
+                            idrefElementB = getIdref(getClassifier(nList.item(0)));
+                        } else {
+                            //Lançar exception
+                        }
                         // Criando um diagrama para nao ficar toda hora realizando uma
                         // pesquisa dentro da lista.
                         UmlDiagram diagram = getDiagram(extractId(id));
@@ -277,7 +283,7 @@ public class ParserXMI {
                                 diagram.getElement(idrefElementB));
 
                         //Para não precisar atualizar o item presente na lista.
-                        diagram.AddAssociation(newAssociation);
+                        diagram.addAssociation(newAssociation);
                     }
                 } else {
                     //Lançar uma exception
@@ -354,7 +360,7 @@ public class ParserXMI {
      * @param eElement - Recebe o elemento que contém a generalization, para que assim
      * se possa extrair todos os dados necessários.
      */
-    public void addGeneralization(Element eElement){
+    private void addGeneralization(Element eElement){
         String id = getId(eElement), label = getName(eElement), idChild="", idParent="";
         UmlDiagram diagram;
         UmlGeneralization newGeneralization;
@@ -382,7 +388,7 @@ public class ParserXMI {
         newGeneralization = new UmlGeneralization(id, label,
                 diagram.getElement(idParent), diagram.getElement(idChild));
         
-        diagram.AddDependency(newGeneralization);
+        diagram.addDependency(newGeneralization);
     }
     
     
@@ -394,7 +400,8 @@ public class ParserXMI {
      * ser uma lista tanto para um elemento filho quanto um pai.
      * @return - retorna uma String com o valor do idRef do elemento escolhido.
      */
-    public String getGeneralizableElement(NodeList nList){
+    private
+        String getGeneralizableElement(NodeList nList){
         String idGeneralization;
         
         if(isElementNode(nList.item(0))){
@@ -434,7 +441,7 @@ public class ParserXMI {
         
         if(nList.getLength() != 0){
             if(isElementNode(nList.item(0)))
-                idrefBase = getIdref(getTagUseCase((Element) nList.item(0)));
+                idrefBase = getIdref(getElementUseCase((Element) nList.item(0)));
         } else {
             //lançar exception
         }
@@ -444,7 +451,7 @@ public class ParserXMI {
 
         if(nList.getLength() != 0){
             if(isElementNode(nList.item(0)))
-                idrefAddition = getIdref(getTagUseCase((Element) nList.item(0)));
+                idrefAddition = getIdref(getElementUseCase((Element) nList.item(0)));
         } else {
             //lançar exception
         }
@@ -458,7 +465,7 @@ public class ParserXMI {
             diagram.getElement(idrefAddition));
         //Para não precisar atualizar o item presente na lista.
         
-        diagram.AddDependency(newInclude);
+        diagram.addDependency(newInclude);
     }
     
     //</editor-fold>
@@ -481,7 +488,7 @@ public class ParserXMI {
         
         if(nList.getLength() != 0){
             if(isElementNode(nList.item(0)))
-                idrefBase = getIdref(getTagUseCase((Element) nList.item(0)));
+                idrefBase = getIdref(getElementUseCase((Element) nList.item(0)));
         } else{
             //lançar exception
         }
@@ -490,7 +497,7 @@ public class ParserXMI {
         
         if(nList.getLength() != 0){
             if(isElementNode(nList.item(0)))
-                idrefExtension = getIdref(getTagUseCase((Element) nList.item(0)));
+                idrefExtension = getIdref(getElementUseCase((Element) nList.item(0)));
         } else {
             //lançar exception
         }
@@ -504,7 +511,7 @@ public class ParserXMI {
                 diagram.getElement(idrefExtension));
         //Para não precisar atualizar o item presente na lista.
         
-        diagram.AddDependency(newExtend);
+        diagram.addDependency(newExtend);
     }
     
     //</editor-fold>
@@ -567,7 +574,7 @@ public class ParserXMI {
 
     //</editor-fold>    
     
-    //<editor-fold defaultstate="collapsed" desc="getId, getName, getIdref, getTagUseCase">
+    //<editor-fold defaultstate="collapsed" desc="getId, getName, getIdref, getElementUseCase">
     
     /**
      * Método para pegar o ID do elemento, independentemente do mesmo ser
@@ -614,7 +621,7 @@ public class ParserXMI {
      * @param eElement - Elemento que contém o elemento UML:UseCase
      * @return - retorna o Elemento UML:UseCase
      */
-    private Element getTagUseCase(Element eElement){
+    private Element getElementUseCase(Element eElement){
         NodeList nList = eElement.getElementsByTagName("UML:UseCase");
         
         if(nList.getLength() != 0)

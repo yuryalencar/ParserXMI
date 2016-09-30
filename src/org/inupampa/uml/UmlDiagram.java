@@ -79,7 +79,7 @@ public abstract class UmlDiagram {
     
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Método getElement">
+    //<editor-fold defaultstate="collapsed" desc="Método getElement, getAssociation, getDependency">
     
     /**
      * Método para pegar um elemento da lista,
@@ -116,6 +116,22 @@ public abstract class UmlDiagram {
         return null; //Lançar exception
     }
     
+    /**
+     *  Método para pegar uma Dependência relacionada a um diagrama específico
+     * aquisição feita através do id da mesma.
+     * @param id - String que pode conter números e letras(Único para cada Dependencia).
+     * @return  - Retorna o Objeto da associação.
+     */
+    public UmlDependency getDependency(String id){
+        
+        for (UmlDependency dependency : dependencies) {
+            if(dependency.getId().equals(id))
+                return dependency;
+        }
+        
+        return null; //Lançar exception
+    }
+    
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Adicionar Elementos, Associações e Dependências">
@@ -126,7 +142,7 @@ public abstract class UmlDiagram {
      * exception do tipo DuplicatedElementException.
      * @param e Elemento a ser adicionado
      */
-    public void AddElement(UmlElement e){
+    public void addElement(UmlElement e){
         
         for (UmlElement element : elements) {
             if(element.getId().equals(e.getId())){
@@ -146,7 +162,7 @@ public abstract class UmlDiagram {
      * InconsistentAssociationException.
      * @param a Associação a ser adicionada.
      */
-    public void AddAssociation(UmlAssociation a){
+    public void addAssociation(UmlAssociation a){
         boolean existA = false;
         boolean existB = false;
         
@@ -174,42 +190,42 @@ public abstract class UmlDiagram {
 
     /**
      * Adiciona uma dependência na lista de dependências do
-     * diagrama. Se a dependência já existir, dispara uma 
-     * exception do tipo DuplicatedAssociationException.
-     * Se os elementos que compõem a dependência não fizerem
-     * parte do diagrama, dispara uma exceção do tipo
-     * InconsistentAssociationException.
-     * @param a Dependência a ser adicionada.
+     * diagrama. Se d dependência já existir, dispara uma 
+ exception do tipo DuplicatedAssociationException.
+ Se os elementos que compõem d dependência não fizerem
+ parte do diagrama, dispara uma exceção do tipo
+ InconsistentAssociationException.
+     * @param d Dependência d ser adicionada.
      */
-    public void AddDependency(UmlDependency a){
+    public void addDependency(UmlDependency d){
         boolean existA = false;
         boolean existB = false;
         
         for (UmlDependency dependency : dependencies) {
-            if(dependency.getId().equals(a.getId())){
+            if(dependency.getId().equals(d.getId())){
                 // Lançar exception
             }
         }
         
         for (UmlElement element : elements) {
-            if(a.getBase().getId().equals(element.getId())){
+            if(d.getBase().getId().equals(element.getId())){
                 existA = true;
             }
             
-            if(a.getDependent().getId().equals(element.getId())){
+            if(d.getDependent().getId().equals(element.getId())){
                 existB = true;
             }
         }
 
         if(existA && existB)
-            dependencies.add(a);
+            dependencies.add(d);
         else
             System.out.println("");//Lançar exception
     }
     
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Remoção de elementos e associações">
+    //<editor-fold defaultstate="collapsed" desc="Remoção de elementos, associações e dependências">
     
     /**
      * Exclusão de uma elemento através do seu ID.
