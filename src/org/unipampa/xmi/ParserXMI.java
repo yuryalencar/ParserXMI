@@ -19,6 +19,7 @@ import org.xml.sax.SAXException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 //</editor-fold>
+
 /**
  * @author yuryalencar Esta classe possui os métodos necessários para extrair
  * informações de modelos UML armazenados em arquivos XMI.
@@ -65,7 +66,7 @@ public class ParserXMI {
             // A Ordem importa, ou seja, primeiro tem que ser sempre adicionados
             //os modelos e a partir deles os elementos, em seguida as associações e
             //dependencias.
-            createAndAdd(doc, "UML:Model");
+            createAndAdd(doc, "UML:Model");//
             createAndAdd(doc, "UML:Actor");
             createAndAdd(doc, "UML:UseCase");
             createAndAdd(doc, "UML:Association");
@@ -105,8 +106,7 @@ public class ParserXMI {
      * @throws IOException - Referente a outro erro que pode dar na
      * transferência do XMI para a memória.
      */
-    private void createAndAdd(Document doc, String nameTag) throws ParserConfigurationException,
-            SAXException, IOException {
+    private void createAndAdd(Document doc, String nameTag) {
 
         //Criando uma lista com todos os nodos de acordo com a tag Fornecida
         NodeList nList = doc.getElementsByTagName(nameTag);
@@ -126,31 +126,31 @@ public class ParserXMI {
                     //Verifico qual tipo é o elemento
                     
                     if (eElement.getNodeName().equalsIgnoreCase("UML:Model") 
-                            && !(getId(eElement).equals(""))) {
+                            && eElement.hasAttribute("xmi.id")) {
                         addModel(eElement);
 
                     } else if (eElement.getNodeName().equalsIgnoreCase("UML:Actor") 
-                            && !(getId(eElement).equals(""))) {
+                            && eElement.hasAttribute("xmi.id")) {
                         addActor(eElement);
 
                     } else if (eElement.getNodeName().equalsIgnoreCase("UML:UseCase") 
-                            && !(getId(eElement).equals(""))) {
+                            && eElement.hasAttribute("xmi.id")) {
                         addUseCase(eElement);
 
                     } else if (eElement.getNodeName().equalsIgnoreCase("UML:Association") 
-                            && !(getId(eElement).equals(""))) {
+                            && eElement.hasAttribute("xmi.id")) {
                         addAssociation(eElement);
 
                     } else if (eElement.getNodeName().equalsIgnoreCase("UML:Include") 
-                            && !(getId(eElement).equals(""))){
+                            && eElement.hasAttribute("xmi.id")){
                         addInclude(eElement);
 
                     } else if (eElement.getNodeName().equalsIgnoreCase("UML:Extend") 
-                            && !(getId(eElement).equals(""))){
+                            && eElement.hasAttribute("xmi.id")){
                         addExtend(eElement);
                         
                     } else if (eElement.getNodeName().equalsIgnoreCase("UML:Generalization") 
-                            && !(getId(eElement).equals(""))){
+                            && eElement.hasAttribute("xmi.id")){
                         addGeneralization(eElement);
                     }
                 }
@@ -276,11 +276,12 @@ public class ParserXMI {
                         }
                         // Criando um diagrama para nao ficar toda hora realizando uma
                         // pesquisa dentro da lista.
-                        UmlDiagram diagram = getDiagram(extractId(id));
-
+                        UmlDiagram diagram = getDiagram(id);
+                        UmlElement element = diagram.getElement(idrefElementA);
+                        UmlElement element2 = diagram.getElement(idrefElementB);
+                        
                         newAssociation = new UmlAssociation(id, name,
-                                diagram.getElement(idrefElementA),
-                                diagram.getElement(idrefElementB));
+                                element, element2);
 
                         //Para não precisar atualizar o item presente na lista.
                         diagram.addAssociation(newAssociation);

@@ -273,4 +273,19 @@ public abstract class UmlDiagram {
     }
 
     //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="toString">
+    
+    @Override
+    public String toString(){
+        String dados = "\nId: "+this.id;
+        dados += "\nName: "+this.nome;
+        dados += "\nQuantidade de Associações: "+this.associations.size();
+        dados += "\nQuantidade de Dependências: "+this.dependencies.size();
+        dados += "\nQuantidade de Elementos: "+this.elements.size();
+        return dados;
+    }
+    
+    //</editor-fold>
+    
 }
