@@ -11,7 +11,7 @@ public class Aplicacao {
     
     public static void main(String[] args) {
     
-            ParserXMI parser = new ParserXMI("/a/b/c.xmi");
+            ParserXMI parser = new ParserXMI("/home/yuryalencar/NetBeansProjects/Parser_XMI/src/org/unipampa/arquivoxmi/PintarCasa.xml");
             
             for(UmlDiagram d : parser.getDiagrams()){
                 System.out.println(d.toString());

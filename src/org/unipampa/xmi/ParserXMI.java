@@ -16,7 +16,6 @@ import org.w3c.dom.Element;
 import javax.xml.parsers.ParserConfigurationException;
 import org.inupampa.uml.*;
 import org.xml.sax.SAXException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 //</editor-fold>
 
@@ -66,13 +65,13 @@ public class ParserXMI {
             // A Ordem importa, ou seja, primeiro tem que ser sempre adicionados
             //os modelos e a partir deles os elementos, em seguida as associações e
             //dependencias.
-            createAndAdd(doc, "UML:Model");//
-            createAndAdd(doc, "UML:Actor");
-            createAndAdd(doc, "UML:UseCase");
-            createAndAdd(doc, "UML:Association");
-            createAndAdd(doc, "UML:Include");
-            createAndAdd(doc, "UML:Extend");
-            createAndAdd(doc, "UML:Generalization");
+            addModel(doc);
+            createAndAddUseCaseDiagram(doc, "UML:Actor");
+            createAndAddUseCaseDiagram(doc, "UML:UseCase");
+            createAndAddUseCaseDiagram(doc, "UML:Association");
+            createAndAddUseCaseDiagram(doc, "UML:Include");
+            createAndAddUseCaseDiagram(doc, "UML:Extend");
+            createAndAddUseCaseDiagram(doc, "UML:Generalization");
 
         } catch (Exception ex) {
             Logger.getLogger(ParserXMI.class.getName()).log(Level.SEVERE, null, ex);
@@ -87,8 +86,35 @@ public class ParserXMI {
     }
 
     //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar um Modelo (UseCaseDiagram or ActivityDiagram)">
+    
+    /**
+     * Método para adicionar um novo modelo, pegando seu id e nome e o adicionando
+     * na lista de diagramas.
+     *
+     * @param doc - O documento para que assim tirar o elemento e seus atributos
+     * necessários para sua criação.
+     */
+    private void addModel(Document doc) {
+        NodeList nList = doc.getElementsByTagName("UML:Model");
+        for(int i = 0; i<nList.getLength(); i++){
+            if(isElementNode(nList.item(i))){
+                Element eElement = (Element) nList.item(i);
+                
+                UmlDiagram newDiagramUseCase;
+                
+                newDiagramUseCase = new UseCaseDiagram(getId(eElement), getName(eElement));
+                diagrams.add(newDiagramUseCase);
+            }
+        }
+    }
 
-    //<editor-fold defaultstate="collapsed" desc="Gerenciamento">
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="UseCaseDiagram">
+    
+    //<editor-fold defaultstate="collapsed" desc="Gerenciamento de um caso de uso">
    
     /**
      * Método para criar uma lista de nodos que será utilizada tanto para a
@@ -106,7 +132,7 @@ public class ParserXMI {
      * @throws IOException - Referente a outro erro que pode dar na
      * transferência do XMI para a memória.
      */
-    private void createAndAdd(Document doc, String nameTag) {
+    private void createAndAddUseCaseDiagram(Document doc, String nameTag) {
 
         //Criando uma lista com todos os nodos de acordo com a tag Fornecida
         NodeList nList = doc.getElementsByTagName(nameTag);
@@ -125,11 +151,7 @@ public class ParserXMI {
 
                     //Verifico qual tipo é o elemento
                     
-                    if (eElement.getNodeName().equalsIgnoreCase("UML:Model") 
-                            && eElement.hasAttribute("xmi.id")) {
-                        addModel(eElement);
-
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Actor") 
+                    if (eElement.getNodeName().equalsIgnoreCase("UML:Actor") 
                             && eElement.hasAttribute("xmi.id")) {
                         addActor(eElement);
 
@@ -156,23 +178,6 @@ public class ParserXMI {
                 }
             }
         }
-    }
-
-    //</editor-fold>
-    
-    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar um Modelo">
-    
-    /**
-     * Método para adicionar um novo modelo, pegando seu id e nome e o adiciona
-     * na lista de diagramas.
-     *
-     * @param eElement - O elemento para que assim tirar seus atributos
-     * necessários para sua criação.
-     */
-    private void addModel(Element eElement) {
-        UmlDiagram newDiagramUseCase;
-        newDiagramUseCase = new UseCaseDiagram(getId(eElement), getName(eElement));
-        diagrams.add(newDiagramUseCase);
     }
 
     //</editor-fold>
@@ -517,6 +522,28 @@ public class ParserXMI {
     
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="getElementUseCase">
+    
+    /**
+     * Método para pegar o elemento UML:UseCase, que está presente dentro dos
+     * includes e extends.
+     * @param eElement - Elemento que contém o elemento UML:UseCase
+     * @return - retorna o Elemento UML:UseCase
+     */
+    private Element getElementUseCase(Element eElement){
+        NodeList nList = eElement.getElementsByTagName("UML:UseCase");
+        
+        if(nList.getLength() != 0)
+            if(isElementNode(nList.item(0)))
+                return (Element) nList.item(0);
+        
+        return null; //LançarException
+    }
+    
+    //</editor-fold>
+    
+    //</editor-fold>
+    
     //<editor-fold defaultstate="collapsed" desc="Busca de diagrama e extração de ID">
     
     /**
@@ -575,7 +602,7 @@ public class ParserXMI {
 
     //</editor-fold>    
     
-    //<editor-fold defaultstate="collapsed" desc="getId, getName, getIdref, getElementUseCase">
+    //<editor-fold defaultstate="collapsed" desc="getId, getName, getIdref">
     
     /**
      * Método para pegar o ID do elemento, independentemente do mesmo ser
@@ -616,22 +643,6 @@ public class ParserXMI {
         return idref;
     }
 
-    /**
-     * Método para pegar o elemento UML:UseCase, que está presente dentro dos
-     * includes e extends.
-     * @param eElement - Elemento que contém o elemento UML:UseCase
-     * @return - retorna o Elemento UML:UseCase
-     */
-    private Element getElementUseCase(Element eElement){
-        NodeList nList = eElement.getElementsByTagName("UML:UseCase");
-        
-        if(nList.getLength() != 0)
-            if(isElementNode(nList.item(0)))
-                return (Element) nList.item(0);
-        
-        return null; //LançarException
-    }
-    
     //</editor-fold>     
     
     //<editor-fold defaultstate="collapsed" desc="getDiagrams">
