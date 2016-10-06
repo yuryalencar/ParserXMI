@@ -544,6 +544,10 @@ public class ParserXMI {
     
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="ActivityDiagram">
+    
+    //</editor-fold> // Implementar - Diagramas de Atividades
+    
     //<editor-fold defaultstate="collapsed" desc="Busca de diagrama e extração de ID">
     
     /**

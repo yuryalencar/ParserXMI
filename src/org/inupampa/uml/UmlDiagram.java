@@ -231,11 +231,11 @@ public abstract class UmlDiagram {
      * Exclusão de uma elemento através do seu ID.
      * A escolha do ID veio a partir de saber que cada elemento, só pode
      * conter um único. 
-     * @param e - O elemento que deseja excluir.
+     * @param id - O id do elemento que deseja excluir.
      */
-    public void removeElement(UmlElement e){
+    public void removeElement(String id){
         for (UmlElement element : elements) {
-            if(element.getId().equals(e.getId())){
+            if(element.getId().equals(id)){
                 elements.remove(element);
                 break;
             }

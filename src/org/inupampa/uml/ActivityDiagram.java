@@ -9,16 +9,16 @@ package org.inupampa.uml;
  *
  * @author yuryalencar
  */
-public class UmlFinalActivity extends ActivityDiagram{
-
+public class ActivityDiagram extends UmlElement{
+    
     /**
      * Construtor com os dados para se criar uma atividade
-     * final de um diagrama de atividades
-     * @param id - número identificador da atividade final a ser
+     * do diagrama de atividades
+     * @param id - número identificador da atividade a ser
      * adicionada
-     * @param label - label da atividade final que pode estar em branco 
-     */    
-    public UmlFinalActivity(String id, String label) {
+     * @param label - label da atividade pode estar em branco 
+     */
+    public ActivityDiagram(String id, String label) {
         super(id, label);
     }
     
