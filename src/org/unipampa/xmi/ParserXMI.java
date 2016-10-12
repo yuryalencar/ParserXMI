@@ -65,18 +65,18 @@ public class ParserXMI {
             //os modelos e a partir deles os elementos, em seguida as associações e
             //dependencias.
             // Diagramas de Caso de uso
-            manager(doc, "UML:Actor");
-            manager(doc, "UML:UseCase");
-            manager(doc, "UML:Association");
-            manager(doc, "UML:Include");
-            manager(doc, "UML:Extend");
-            manager(doc, "UML:Generalization");
+            manager(doc, "UML:Actor", true);
+            manager(doc, "UML:UseCase", true);
+            manager(doc, "UML:Association", true);
+            manager(doc, "UML:Include", true);
+            manager(doc, "UML:Extend", true);
+            manager(doc, "UML:Generalization", true);
 
             //Diagramas de Atividades
-            manager(doc, "UML:Pseudostate");
-            manager(doc, "UML:ActionState");
-            manager(doc, "UML:Transition");
-            manager(doc, "UML:FinalState");
+            manager(doc, "UML:Pseudostate", false);
+            manager(doc, "UML:ActionState", false);
+            manager(doc, "UML:FinalState", false);
+            manager(doc, "UML:Transition", false);
             
         } catch (Exception ex) {
             Logger.getLogger(ParserXMI.class.getName()).log(Level.SEVERE, null, ex);
@@ -128,7 +128,7 @@ public class ParserXMI {
      * @param option - opção que tem haver com qual quer adicionar, no momento
      * está 1.p/ addDiagramas ou addElementos e 2.p/ addAssociações
      */
-    private void manager(Document doc, String nameTag) {
+    private void manager(Document doc, String nameTag, boolean isUseCase) {
 
         //Criando uma lista com todos os nodos de acordo com a tag Fornecida
         NodeList nList = doc.getElementsByTagName(nameTag);
@@ -145,30 +145,51 @@ public class ParserXMI {
                     //Passo o nodo para Element para poder tirar seus dados.
                     Element eElement = (Element) nNode;
 
-                    //Verifico qual tipo é o elemento
-                    if (eElement.getNodeName().equalsIgnoreCase("UML:Actor")
-                            && eElement.hasAttribute("xmi.id")) {
-                        addActor(eElement);
+                    if(isUseCase){
+                        //Verifico qual tipo é o elemento
+                        if (eElement.getNodeName().equalsIgnoreCase("UML:Actor")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addActor(eElement);
 
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:UseCase")
-                            && eElement.hasAttribute("xmi.id")) {
-                        addUseCase(eElement);
+                        } else if (eElement.getNodeName().equalsIgnoreCase("UML:UseCase")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addUseCase(eElement);
 
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Association")
-                            && eElement.hasAttribute("xmi.id")) {
-                        addAssociation(eElement);
+                        } else if (eElement.getNodeName().equalsIgnoreCase("UML:Association")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addAssociation(eElement);
 
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Include")
-                            && eElement.hasAttribute("xmi.id")) {
-                        addInclude(eElement);
+                        } else if (eElement.getNodeName().equalsIgnoreCase("UML:Include")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addInclude(eElement);
 
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Extend")
-                            && eElement.hasAttribute("xmi.id")) {
-                        addExtend(eElement);
+                        } else if (eElement.getNodeName().equalsIgnoreCase("UML:Extend")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addExtend(eElement);
 
-                    } else if (eElement.getNodeName().equalsIgnoreCase("UML:Generalization")
-                            && eElement.hasAttribute("xmi.id")) {
-                        addGeneralization(eElement);
+                        } else if (eElement.getNodeName().equalsIgnoreCase("UML:Generalization")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addGeneralization(eElement);
+                        }
+                    // Caso não seja um caso de uso é um diagrama de atividades
+                    } else {
+                        if (eElement.getNodeName().equalsIgnoreCase("UML:Pseudostate")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addPseudostate(eElement);
+
+                        } else if (eElement.getNodeName().equalsIgnoreCase("UML:ActionState")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addActionState(eElement);
+
+                        } else if(eElement.getNodeName().equalsIgnoreCase("UML:FinalState")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addFinalState(eElement);
+
+                        } else if(eElement.getNodeName().equalsIgnoreCase("UML:Transition")
+                                && eElement.hasAttribute("xmi.id")) {
+                            addTransition(eElement);
+
+                        }
                     }
                 }
             }
@@ -542,13 +563,80 @@ public class ParserXMI {
 
     //<editor-fold defaultstate="collapsed" desc="ActivityDiagram">
 
-    private void addPseudostate(Element eElement){}
+    /**
+     *  Método para a adição de um pseudostate de um diagrama de atividades
+     *que pode ser tanto um estado incial ou um branche ou merge
+     * @param eElement - elemento que contém a atividade inicial, merge ou branche
+     */
+    private void addPseudostate(Element eElement){
+        String id;
+        if(eElement.getAttribute("kind").equals("initial")){
+            id = getId(eElement);
+            UmlInitialActivity initialActivity = new UmlInitialActivity(getId(eElement), getName(eElement));
+            getDiagram(id).addElement(initialActivity);
+        } else if (eElement.getAttribute("kind").equals("junction")){
+            id = getId(eElement);
+            UmlDecisionNode decisionNode = new UmlDecisionNode(id, getName(eElement));
+            //Faltando implementar a inserção das transições
+            getDiagram(id).addElement(decisionNode);
+        } else {
+            // Lançar exception 
+        }
+    }
     
-    private void addActionState(Element eElement){}
+    /**
+     * Método para a adição de uma ação (Atividade) de um
+     * diagrama de atividades
+     * @param eElement - elemento que contém a ação
+     */
+    private void addActionState(Element eElement){
+        String id = getId(eElement);
+        UmlActivity action = new UmlActivity(id, getName(eElement));
+        //Faltando implementar sobre a entrada no estado
+        getDiagram(id).addElement(action);
+    }
     
-    private void addTransition(Element eElement){}
+    private void addTransition(Element eElement){
+        String id = getId(eElement), name = getName(eElement), idSource="", idTarget="";
+        UmlDirectedAssociation transition;
+        UmlDiagram a = getDiagram(id);
+        
+        NodeList nList = eElement.getElementsByTagName("UML:Transition.source");
+        
+        if(isElementNode(nList.item(0))){
+            idSource = getIdref(getStateVertex(nList.item(0)));
+        }
+        
+        nList = eElement.getElementsByTagName("UML:Transition.target");
+        
+        if(isElementNode(nList.item(0))){
+            idTarget = getIdref(getStateVertex(nList.item(0)));
+        }
+        
+        transition = new UmlDirectedAssociation(id, name, a.getElement(idSource), a.getElement(idTarget));
+        //Faltando implementar algo mais específico de uma transição
+        a.addAssociation(transition);
+    }
     
-    private void addFinalState(Element eElement){}
+    private Element getStateVertex(Node nNode){
+        Element eElement = (Element) nNode;
+        NodeList nList = eElement.getElementsByTagName("UML:StateVertex");
+        if(isElementNode(nList.item(0)))
+            return (Element) nList.item(0);
+        return null; // lançar exception
+    }
+    
+    /**
+     * Método para a adição de uma ação final (Atividade) de um
+     * diagrama de atividades
+     * @param eElement - elemento que contém a ação final
+     */
+    private void addFinalState(Element eElement){
+        String id = getId(eElement);
+        UmlFinalActivity action = new UmlFinalActivity(id, getName(eElement));
+        //Faltando implementar algo mais específico de uma atividade final
+        getDiagram(id).addElement(action);
+    }
     
     //</editor-fold> // Implementar - Diagramas de Atividades
 

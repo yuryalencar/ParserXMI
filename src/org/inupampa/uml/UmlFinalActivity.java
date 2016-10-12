@@ -9,7 +9,7 @@ package org.inupampa.uml;
  *
  * @author yuryalencar
  */
-public class UmlFinalActivity extends ActivityDiagram{
+public class UmlFinalActivity extends UmlActivity{
 
     /**
      * Construtor com os dados para se criar uma atividade
