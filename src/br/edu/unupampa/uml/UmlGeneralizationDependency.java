@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 /**
  *
  * @author yuryalencar
  */
-public class UmlGeneralization extends UmlDependency{
+public class UmlGeneralizationDependency extends UmlDependency{
 
     //<editor-fold defaultstate="collapsed" desc="Construtor">
     
@@ -20,7 +20,7 @@ public class UmlGeneralization extends UmlDependency{
      * atributos e métodos (Relação de herança).
      * @param child - Elemento filho que é gerado a partir do elemento pai.
      */
-    public UmlGeneralization(String id, String label, UmlElement parent, UmlElement child){
+    public UmlGeneralizationDependency(String id, String label, UmlElement parent, UmlElement child){
         super(id, label, parent, child);
     }
     

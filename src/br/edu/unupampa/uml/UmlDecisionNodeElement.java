@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  *
  * @author yuryalencar
  */
-public class UmlDecisionNode extends UmlElement{
+public class UmlDecisionNodeElement extends UmlElement{
 
     /**
      * Construtor com os dados para se criar um nodo de decisão
@@ -18,7 +18,7 @@ public class UmlDecisionNode extends UmlElement{
      * adicionada
      * @param label - label do nodo de decisão pode estar em branco 
      */    
-    public UmlDecisionNode(String id, String label) {
+    public UmlDecisionNodeElement(String id, String label) {
         super(id, label);
     }
     

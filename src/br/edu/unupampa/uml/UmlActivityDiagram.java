@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  *
  * @author yuryalencar
  */
-public class ActivityDiagram extends UmlDiagram{
+public class UmlActivityDiagram extends UmlDiagram{
     
     /**
      * Construtor com os dados para se criar uma atividade
@@ -18,7 +18,7 @@ public class ActivityDiagram extends UmlDiagram{
      * adicionada
      * @param label - label da atividade pode estar em branco 
      */
-    public ActivityDiagram(String id, String label) {
+    public UmlActivityDiagram(String id, String label) {
         super(id, label);
     }
     

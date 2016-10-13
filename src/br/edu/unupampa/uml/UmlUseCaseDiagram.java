@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  *
  * @author yuryalencar
  */
-public class UseCaseDiagram extends UmlDiagram{
+public class UmlUseCaseDiagram extends UmlDiagram{
     
     //<editor-fold defaultstate="collapsed" desc="Construtor">
 
@@ -18,7 +18,7 @@ public class UseCaseDiagram extends UmlDiagram{
      * @param id - String contendo identificador único e obrigatório
      * @param nome  - String contendo nome do diagrama (Opcional)
      */
-    public UseCaseDiagram(String id, String nome) {
+    public UmlUseCaseDiagram(String id, String nome) {
         super(id, nome);
     }
     

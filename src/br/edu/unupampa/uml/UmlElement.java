@@ -1,4 +1,4 @@
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  * @author yuryalencar

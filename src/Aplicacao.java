@@ -1,5 +1,5 @@
-import org.inupampa.uml.*;
-import org.unipampa.xmi.*;
+import br.edu.unupampa.uml.UmlDiagram;
+import br.edu.unipampa.xmi.ParserXMI;
 
 /**
  *

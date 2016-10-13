@@ -1,10 +1,10 @@
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  * @author yuryalencar
  * Representa um ator de um diagrama de caso de uso da UML.
  */
-public class ActorElement extends UmlElement{
+public class UmlActorElement extends UmlElement{
 
     //<editor-fold defaultstate="collapsed" desc="Construtor">
 
@@ -13,7 +13,7 @@ public class ActorElement extends UmlElement{
      * @param id Identificador único do objeto
      * @param label Rótulo do objeto.
      */
-    public ActorElement(String id, String label) {
+    public UmlActorElement(String id, String label) {
         super(id, label);
     }
     

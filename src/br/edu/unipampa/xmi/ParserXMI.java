@@ -1,6 +1,20 @@
-package org.unipampa.xmi;
+package br.edu.unipampa.xmi;
 
 //<editor-fold defaultstate="collapsed" desc="Importações">
+import br.edu.unupampa.uml.UmlUseCaseElement;
+import br.edu.unupampa.uml.UmlElement;
+import br.edu.unupampa.uml.UmlIncludeDependency;
+import br.edu.unupampa.uml.UmlActorElement;
+import br.edu.unupampa.uml.UmlDirectedAssociation;
+import br.edu.unupampa.uml.UmlExtendDependency;
+import br.edu.unupampa.uml.UmlAssociation;
+import br.edu.unupampa.uml.UmlUseCaseDiagram;
+import br.edu.unupampa.uml.UmlDecisionNodeElement;
+import br.edu.unupampa.uml.UmlInitialActivityElement;
+import br.edu.unupampa.uml.UmlGeneralizationDependency;
+import br.edu.unupampa.uml.UmlDiagram;
+import br.edu.unupampa.uml.UmlFinalActivityElement;
+import br.edu.unupampa.uml.UmlActivityElement;
 import java.util.ArrayList;
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +27,6 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
 import javax.xml.parsers.ParserConfigurationException;
-import org.inupampa.uml.*;
 import org.xml.sax.SAXException;
 
 //</editor-fold>
@@ -92,7 +105,7 @@ public class ParserXMI {
 
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar um Modelo (UseCaseDiagram and ActivityDiagram)">
+    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar um Modelo (UmlUseCaseDiagram and ActivityDiagram)">
     /**
      * Método para adicionar um novo modelo, pegando seu id e nome e o
      * adicionando na lista de diagramas.
@@ -108,7 +121,7 @@ public class ParserXMI {
 
                 UmlDiagram newDiagramUseCase;
 
-                newDiagramUseCase = new UseCaseDiagram(getId(eElement), getName(eElement));
+                newDiagramUseCase = new UmlUseCaseDiagram(getId(eElement), getName(eElement));
                 diagrams.add(newDiagramUseCase);
             }
         }
@@ -116,7 +129,7 @@ public class ParserXMI {
 
     //</editor-fold>
      
-    //<editor-fold defaultstate="collapsed" desc="Gerenciamento (UseCaseDiagram and ActivityDiagram)">
+    //<editor-fold defaultstate="collapsed" desc="Gerenciamento (UmlUseCaseDiagram and ActivityDiagram)">
 
     /**
      * Método para criar uma lista de nodos que será utilizada tanto para a
@@ -198,7 +211,7 @@ public class ParserXMI {
 
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="UseCaseDiagram">
+    //<editor-fold defaultstate="collapsed" desc="UmlUseCaseDiagram">
     
     //<editor-fold defaultstate="collapsed" desc="Criar e adicionar Elementos(Actors and UseCases)">
     /**
@@ -210,7 +223,7 @@ public class ParserXMI {
      */
     private void addActor(Element eElement) {
         String id = getId(eElement);
-        UmlElement newActor = new ActorElement(id, getName(eElement));
+        UmlElement newActor = new UmlActorElement(id, getName(eElement));
         getDiagram(id).addElement(newActor);
     }
 
@@ -223,7 +236,7 @@ public class ParserXMI {
      */
     private void addUseCase(Element eElement) {
         String id = getId(eElement);
-        UmlElement newUseCase = new UseCaseElement(id, getName(eElement));
+        UmlElement newUseCase = new UmlUseCaseElement(id, getName(eElement));
         getDiagram(id).addElement(newUseCase);
     }
 
@@ -383,7 +396,7 @@ public class ParserXMI {
     private void addGeneralization(Element eElement) {
         String id = getId(eElement), label = getName(eElement), idChild = "", idParent = "";
         UmlDiagram diagram;
-        UmlGeneralization newGeneralization;
+        UmlGeneralizationDependency newGeneralization;
 
         NodeList nList = eElement.getElementsByTagName("UML:Generalization.child");
 
@@ -405,7 +418,7 @@ public class ParserXMI {
 
         diagram = getDiagram(id);
 
-        newGeneralization = new UmlGeneralization(id, label,
+        newGeneralization = new UmlGeneralizationDependency(id, label,
                 diagram.getElement(idParent), diagram.getElement(idChild));
 
         diagram.addDependency(newGeneralization);
@@ -479,7 +492,7 @@ public class ParserXMI {
         // pesquisa dentro da lista.
         UmlDiagram diagram = getDiagram(idInclude);
 
-        UmlInclude newInclude = new UmlInclude(idInclude, nameInclude,
+        UmlIncludeDependency newInclude = new UmlIncludeDependency(idInclude, nameInclude,
                 diagram.getElement(idrefBase),
                 diagram.getElement(idrefAddition));
         //Para não precisar atualizar o item presente na lista.
@@ -527,7 +540,7 @@ public class ParserXMI {
         // pesquisa dentro da lista.
         UmlDiagram diagram = getDiagram(idExtend);
 
-        UmlExtend newExtend = new UmlExtend(idExtend, nameExtend,
+        UmlExtendDependency newExtend = new UmlExtendDependency(idExtend, nameExtend,
                 diagram.getElement(idrefBase),
                 diagram.getElement(idrefExtension));
         //Para não precisar atualizar o item presente na lista.
@@ -572,11 +585,11 @@ public class ParserXMI {
         String id;
         if(eElement.getAttribute("kind").equals("initial")){
             id = getId(eElement);
-            UmlInitialActivity initialActivity = new UmlInitialActivity(getId(eElement), getName(eElement));
+            UmlInitialActivityElement initialActivity = new UmlInitialActivityElement(getId(eElement), getName(eElement));
             getDiagram(id).addElement(initialActivity);
         } else if (eElement.getAttribute("kind").equals("junction")){
             id = getId(eElement);
-            UmlDecisionNode decisionNode = new UmlDecisionNode(id, getName(eElement));
+            UmlDecisionNodeElement decisionNode = new UmlDecisionNodeElement(id, getName(eElement));
             //Faltando implementar a inserção das transições
             getDiagram(id).addElement(decisionNode);
         } else {
@@ -591,7 +604,7 @@ public class ParserXMI {
      */
     private void addActionState(Element eElement){
         String id = getId(eElement);
-        UmlActivity action = new UmlActivity(id, getName(eElement));
+        UmlActivityElement action = new UmlActivityElement(id, getName(eElement));
         //Faltando implementar sobre a entrada no estado
         getDiagram(id).addElement(action);
     }
@@ -633,7 +646,7 @@ public class ParserXMI {
      */
     private void addFinalState(Element eElement){
         String id = getId(eElement);
-        UmlFinalActivity action = new UmlFinalActivity(id, getName(eElement));
+        UmlFinalActivityElement action = new UmlFinalActivityElement(id, getName(eElement));
         //Faltando implementar algo mais específico de uma atividade final
         getDiagram(id).addElement(action);
     }

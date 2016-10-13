@@ -1,4 +1,4 @@
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 //<editor-fold defaultstate="collapsed" desc="Importações">
 
@@ -263,7 +263,7 @@ public abstract class UmlDiagram {
      * conter um único.
      * @param id - String do id da associação da dependência que quer excluir
      */
-    public void removeDependencies(String id){
+    public void removeDependency(String id){
         for (UmlDependency dependency : dependencies) {
             if(dependency.getId().equals(id)){
                 dependencies.remove(dependency);

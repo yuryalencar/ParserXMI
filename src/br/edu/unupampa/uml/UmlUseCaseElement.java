@@ -1,4 +1,4 @@
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  *
@@ -6,7 +6,7 @@ package org.inupampa.uml;
  * Represent um elemento de Caso de Uso de um
  * diagrama de caso de uso da UML. 
  */
-public class UseCaseElement extends UmlElement{
+public class UmlUseCaseElement extends UmlElement{
 
     //<editor-fold defaultstate="collapsed" desc="Construtor">
     
@@ -15,7 +15,7 @@ public class UseCaseElement extends UmlElement{
      * @param id Identificador único do elemento.
      * @param label Rótulo do elemento.
      */
-    public UseCaseElement(String id, String label) {
+    public UmlUseCaseElement(String id, String label) {
         super(id, label);
     }
     

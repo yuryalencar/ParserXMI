@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  *
  * @author yuryalencar
  */
-public class UmlActivity extends UmlElement{
+public class UmlActivityElement extends UmlElement{
     
     //<editor-fold defaultstate="collapsed" desc="Construtor">
     
@@ -18,7 +18,7 @@ public class UmlActivity extends UmlElement{
      * @param id - número identificador único de uma ação
      * @param label - label que pode conter ou nao
      */
-    public UmlActivity(String id, String label) {
+    public UmlActivityElement(String id, String label) {
         super(id, label);
     }
     

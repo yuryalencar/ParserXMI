@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  *
  * @author yuryalencar
  */
-public class UmlFinalActivity extends UmlActivity{
+public class UmlFinalActivityElement extends UmlActivityElement{
 
     /**
      * Construtor com os dados para se criar uma atividade
@@ -18,7 +18,7 @@ public class UmlFinalActivity extends UmlActivity{
      * adicionada
      * @param label - label da atividade final que pode estar em branco 
      */    
-    public UmlFinalActivity(String id, String label) {
+    public UmlFinalActivityElement(String id, String label) {
         super(id, label);
     }
     

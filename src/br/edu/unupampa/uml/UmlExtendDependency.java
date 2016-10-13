@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.inupampa.uml;
+package br.edu.unupampa.uml;
 
 /**
  *
  * @author yuryalencar
  */
-public class UmlExtend extends UmlDependency{
+public class UmlExtendDependency extends UmlDependency{
 
     //<editor-fold defaultstate="collapsed" desc="Construtor">
 
@@ -21,7 +21,7 @@ public class UmlExtend extends UmlDependency{
      * @param base - Elemento A(Que ja deve conter na lista de elementos do diagrama)
      * @param extension - Elemento B(Que ja deve conter na lista de elementos do diagrama) 
      */
-    public UmlExtend(String id, String label, UmlElement base, UmlElement extension){
+    public UmlExtendDependency(String id, String label, UmlElement base, UmlElement extension){
         super(id, label, base, extension);
     }
     
