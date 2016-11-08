@@ -1,23 +1,23 @@
-package br.edu.unipampa.xmi;
+package br.edu.unipampa.astah.xmi;
 
 //<editor-fold defaultstate="collapsed" desc="Importações">
-import br.edu.unupampa.uml.UmlUseCaseElement;
-import br.edu.unupampa.uml.UmlElement;
-import br.edu.unupampa.uml.UmlIncludeDependency;
-import br.edu.unupampa.uml.UmlActorElement;
-import br.edu.unupampa.uml.UmlDirectedAssociation;
-import br.edu.unupampa.uml.UmlExtendDependency;
-import br.edu.unupampa.uml.UmlAssociation;
-import br.edu.unupampa.uml.UmlUseCaseDiagram;
-import br.edu.unupampa.uml.UmlDecisionNodeElement;
-import br.edu.unupampa.uml.UmlInitialActivityElement;
-import br.edu.unupampa.uml.UmlGeneralizationDependency;
-import br.edu.unupampa.uml.UmlDiagram;
-import br.edu.unupampa.uml.UmlFinalActivityElement;
-import br.edu.unupampa.uml.UmlActivityElement;
+
+import br.edu.unipampa.uml.UmlUseCaseElement;
+import br.edu.unipampa.uml.UmlElement;
+import br.edu.unipampa.uml.UmlActorElement;
+import br.edu.unipampa.uml.UmlDirectedAssociation;
+import br.edu.unipampa.uml.UmlAssociation;
+import br.edu.unipampa.uml.UmlUseCaseDiagram;
+import br.edu.unipampa.uml.UmlDecisionNodeElement;
+import br.edu.unipampa.uml.UmlInitialActivityElement;
+import br.edu.unipampa.uml.UmlDiagram;
+import br.edu.unipampa.uml.UmlFinalActivityElement;
+import br.edu.unipampa.uml.UmlActivityElement;
+import br.edu.unipampa.uml.UmlDependency;
+import br.edu.unipampa.uml.UmlDependencyType;
 import java.util.ArrayList;
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -26,8 +26,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.Element;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
 
 //</editor-fold>
 
@@ -396,7 +394,7 @@ public class ParserXMI {
     private void addGeneralization(Element eElement) {
         String id = getId(eElement), label = getName(eElement), idChild = "", idParent = "";
         UmlDiagram diagram;
-        UmlGeneralizationDependency newGeneralization;
+        UmlDependency newGeneralization;
 
         NodeList nList = eElement.getElementsByTagName("UML:Generalization.child");
 
@@ -418,8 +416,9 @@ public class ParserXMI {
 
         diagram = getDiagram(id);
 
-        newGeneralization = new UmlGeneralizationDependency(id, label,
-                diagram.getElement(idParent), diagram.getElement(idChild));
+        newGeneralization = new UmlDependency(id, label,
+                diagram.getElement(idParent), diagram.getElement(idChild),
+                UmlDependencyType.verifyUmlDependency(3));
 
         diagram.addDependency(newGeneralization);
     }
@@ -492,9 +491,10 @@ public class ParserXMI {
         // pesquisa dentro da lista.
         UmlDiagram diagram = getDiagram(idInclude);
 
-        UmlIncludeDependency newInclude = new UmlIncludeDependency(idInclude, nameInclude,
+        UmlDependency newInclude = new UmlDependency(idInclude, nameInclude,
                 diagram.getElement(idrefBase),
-                diagram.getElement(idrefAddition));
+                diagram.getElement(idrefAddition),
+                UmlDependencyType.verifyUmlDependency(2));
         //Para não precisar atualizar o item presente na lista.
 
         diagram.addDependency(newInclude);
@@ -540,9 +540,10 @@ public class ParserXMI {
         // pesquisa dentro da lista.
         UmlDiagram diagram = getDiagram(idExtend);
 
-        UmlExtendDependency newExtend = new UmlExtendDependency(idExtend, nameExtend,
+        UmlDependency newExtend = new UmlDependency(idExtend, nameExtend,
                 diagram.getElement(idrefBase),
-                diagram.getElement(idrefExtension));
+                diagram.getElement(idrefExtension),
+                UmlDependencyType.verifyUmlDependency(1));
         //Para não precisar atualizar o item presente na lista.
 
         diagram.addDependency(newExtend);
@@ -583,15 +584,16 @@ public class ParserXMI {
      */
     private void addPseudostate(Element eElement){
         String id;
+        UmlElement pseudostate;
         if(eElement.getAttribute("kind").equals("initial")){
             id = getId(eElement);
-            UmlInitialActivityElement initialActivity = new UmlInitialActivityElement(getId(eElement), getName(eElement));
-            getDiagram(id).addElement(initialActivity);
+            pseudostate = new UmlInitialActivityElement(getId(eElement), getName(eElement));
+            getDiagram(id).addElement(pseudostate);
         } else if (eElement.getAttribute("kind").equals("junction")){
             id = getId(eElement);
-            UmlDecisionNodeElement decisionNode = new UmlDecisionNodeElement(id, getName(eElement));
+            pseudostate = new UmlDecisionNodeElement(id, getName(eElement));
             //Faltando implementar a inserção das transições
-            getDiagram(id).addElement(decisionNode);
+            getDiagram(id).addElement(pseudostate);
         } else {
             // Lançar exception 
         }
@@ -631,6 +633,14 @@ public class ParserXMI {
         a.addAssociation(transition);
     }
     
+    /**
+     * Método para pegar o elemento StateVertex,
+     * utilizado para referenciar da onde saí e de onde
+     * chega uma transição no diagrama de atividades.
+     * @param nNode - Nodo onde contém o state vértex para ser extraído.
+     * @return - o Elemento para que se possa ser retirado o seu
+     * idref.
+     */
     private Element getStateVertex(Node nNode){
         Element eElement = (Element) nNode;
         NodeList nList = eElement.getElementsByTagName("UML:StateVertex");
@@ -646,12 +656,12 @@ public class ParserXMI {
      */
     private void addFinalState(Element eElement){
         String id = getId(eElement);
-        UmlFinalActivityElement action = new UmlFinalActivityElement(id, getName(eElement));
+        UmlElement action = new UmlFinalActivityElement(id, getName(eElement));
         //Faltando implementar algo mais específico de uma atividade final
         getDiagram(id).addElement(action);
     }
     
-    //</editor-fold> // Implementar - Diagramas de Atividades
+    //</editor-fold> // Implementando - Diagramas de Atividades
 
     //<editor-fold defaultstate="collapsed" desc="Busca de diagrama e extração de ID">
     /**
@@ -752,7 +762,7 @@ public class ParserXMI {
     //</editor-fold>     
 
     //<editor-fold defaultstate="collapsed" desc="getDiagrams">
-    public ArrayList<UmlDiagram> getDiagrams() {
+    public List <UmlDiagram> getDiagrams() {
 
         //@TODO: clonagem dos objetos (ver imutabilidade)
         return this.diagrams;
