@@ -1,0 +1,8 @@
+{"id":"ss-bfac477d8aa660e32c7362490c834b78","label":"Pessoa","listTag":[]}
+{"id":"7i4-bfac477d8aa660e32c7362490c834b78","label":"Pintor","listTag":[]}
+{"id":"ee-bfac477d8aa660e32c7362490c834b78","label":"Pintar+a+casa","listTag":[]}
+{"id":"1j0-bfac477d8aa660e32c7362490c834b78","label":"Lata+de+tinta","listTag":[]}
+{"id":"242-bfac477d8aa660e32c7362490c834b78","label":"Derrubar+tinta","listTag":[]}
+{"id":"f7a-bfac477d8aa660e32c7362490c834b78","label":"Comprar+tinta","listTag":[]}
+{"id":"su0-bfac477d8aa660e32c7362490c834b78","label":"Pintar+de+Branco","listTag":[]}
+{"id":"tdj-bfac477d8aa660e32c7362490c834b78","label":"Pintar+de+Azul","listTag":[]}

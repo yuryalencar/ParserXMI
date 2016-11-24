@@ -1,0 +1,2 @@
+{"id":"cbj-bfac477d8aa660e32c7362490c834b78","label":"","a":{"id":"ee-bfac477d8aa660e32c7362490c834b78","label":"Pintar+a+casa","listTag":[]},"b":{"id":"7i4-bfac477d8aa660e32c7362490c834b78","label":"Pintor","listTag":[]}}
+{"id":"hn5-bfac477d8aa660e32c7362490c834b78","label":"","a":{"id":"f7a-bfac477d8aa660e32c7362490c834b78","label":"Comprar+tinta","listTag":[]},"b":{"id":"ss-bfac477d8aa660e32c7362490c834b78","label":"Pessoa","listTag":[]}}

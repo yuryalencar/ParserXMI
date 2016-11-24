@@ -2,19 +2,7 @@ package br.edu.unipampa.astah.xmi;
 
 //<editor-fold defaultstate="collapsed" desc="Importações">
 
-import br.edu.unipampa.uml.UmlUseCaseElement;
-import br.edu.unipampa.uml.UmlElement;
-import br.edu.unipampa.uml.UmlActorElement;
-import br.edu.unipampa.uml.UmlDirectedAssociation;
-import br.edu.unipampa.uml.UmlAssociation;
-import br.edu.unipampa.uml.UmlUseCaseDiagram;
-import br.edu.unipampa.uml.UmlDecisionNodeElement;
-import br.edu.unipampa.uml.UmlInitialActivityElement;
-import br.edu.unipampa.uml.UmlDiagram;
-import br.edu.unipampa.uml.UmlFinalActivityElement;
-import br.edu.unipampa.uml.UmlActivityElement;
-import br.edu.unipampa.uml.UmlDependency;
-import br.edu.unipampa.uml.UmlDependencyType;
+import br.edu.unipampa.uml.*;
 import java.util.ArrayList;
 import java.io.File;
 import java.util.List;
@@ -35,12 +23,13 @@ import org.w3c.dom.Element;
  */
 public class ParserXMI {
 
-    //<editor-fold defaultstate="collapsed" desc="Variáveis">
+    //<editor-fold defaultstate="collapsed" desc="Attributes">
+   
     private final ArrayList<UmlDiagram> diagrams;
 
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Documento na memória">
+    //<editor-fold defaultstate="collapsed" desc="Document in memory">
     /**
      * Construtor padrão. Classe imutável.
      *
@@ -89,6 +78,10 @@ public class ParserXMI {
             manager(doc, "UML:FinalState", false);
             manager(doc, "UML:Transition", false);
             
+            //Capturando os taggedValue (Não importa se é false ou true)
+            //ele vai pegar caso o diagrama for de casos de uso ou atividades.
+            manager(doc, "UML:TaggedValue", false);
+           
         } catch (Exception ex) {
             Logger.getLogger(ParserXMI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -103,7 +96,7 @@ public class ParserXMI {
 
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar um Modelo (UmlUseCaseDiagram and ActivityDiagram)">
+    //<editor-fold defaultstate="collapsed" desc="Create and insert a model (UmlUseCaseDiagram and ActivityDiagram)">
     /**
      * Método para adicionar um novo modelo, pegando seu id e nome e o
      * adicionando na lista de diagramas.
@@ -127,7 +120,7 @@ public class ParserXMI {
 
     //</editor-fold>
      
-    //<editor-fold defaultstate="collapsed" desc="Gerenciamento (UmlUseCaseDiagram and ActivityDiagram)">
+    //<editor-fold defaultstate="collapsed" desc="Manager (UmlUseCaseDiagram and ActivityDiagram)">
 
     /**
      * Método para criar uma lista de nodos que será utilizada tanto para a
@@ -202,6 +195,12 @@ public class ParserXMI {
 
                         }
                     }
+                    
+                    if(eElement.getNodeName().equalsIgnoreCase("UML:TaggedValue")
+                            && eElement.hasAttribute("xmi.id")){
+                        addTaggedValue(eElement);
+                    }
+                    
                 }
             }
         }
@@ -211,7 +210,7 @@ public class ParserXMI {
 
     //<editor-fold defaultstate="collapsed" desc="UmlUseCaseDiagram">
     
-    //<editor-fold defaultstate="collapsed" desc="Criar e adicionar Elementos(Actors and UseCases)">
+    //<editor-fold defaultstate="collapsed" desc="Create and insert Elements(Actors and UseCases)">
     /**
      * Método para criar um Ator e o adiciona dentro da lista de elementos,
      * lista presente dentro da classe UmlDiagram.
@@ -240,7 +239,7 @@ public class ParserXMI {
 
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Criar, Adicionar e Verificar Associações">
+    //<editor-fold defaultstate="collapsed" desc="Create, Insert and Verify Associations">
     /**
      * Método para criar e adicionar uma associação, a lista de associações esta
      * presente na classe UmlDiagram, para usar ela utilizo a lista presente
@@ -383,7 +382,7 @@ public class ParserXMI {
 
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar Generalization">
+    //<editor-fold defaultstate="collapsed" desc="Create and insert a Generalization">
     /**
      * Método para a criação e inserção de uma generalização dentro de um
      * diagrama de casos de Uso da Uml.
@@ -453,7 +452,7 @@ public class ParserXMI {
 
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar Include">
+    //<editor-fold defaultstate="collapsed" desc="Create and insert an Include">
     /**
      * Método para adicionar um include na lista de dependencias de um diagrama
      * UML.
@@ -502,7 +501,7 @@ public class ParserXMI {
 
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Criar e Adicionar Extend">
+    //<editor-fold defaultstate="collapsed" desc="Create and insert an Extend">
     /**
      * Método para adicionar um Extend na lista de dependencias de um diagrama
      * UML
@@ -573,7 +572,7 @@ public class ParserXMI {
 
     //</editor-fold>
 
-    //</editor-fold> // Implementado - Diagrama de Casos de uso
+    //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="ActivityDiagram">
 
@@ -661,9 +660,39 @@ public class ParserXMI {
         getDiagram(id).addElement(action);
     }
     
-    //</editor-fold> // Implementando - Diagramas de Atividades
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="TaggedValue">
+    
+    /**
+     * Método para adicionar uma taggedvalue presente no documento xmi
+     * ao seu respectivo elemento.
+     * @param eElement - Elemento que contém a taggedValue para extrair de
+     * quem pertence além da tag e do seu respectivo valor.
+     */
+    private void addTaggedValue(Element eElement){
+        UmlDiagram diagram;
+        String id;
+        TaggedValue tv = new TaggedValue(eElement.getAttribute("tag"), eElement.getAttribute("value"), getId(eElement));
+        NodeList nList = eElement.getElementsByTagName("UML:ModelElement");
+        if(isElementNode(nList.item(0))){
+            eElement = (Element) nList.item(0);
+        }else {
+            //Lançar exception
+        }
+        id = getIdref(eElement);
+        diagram = getDiagram(id);
+        if(diagram.getId().equals(id)){
+            diagram.addTaggedValue(tv);
+        } else {
+            diagram.getElement(id).addTaggedValue(tv);
+        }
+        
+    }
+    
+    //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Busca de diagrama e extração de ID">
+    //<editor-fold defaultstate="collapsed" desc="Search for diagram and extract ID">
     /**
      * Método para extrair a parte do id que é comum em todo o documento XMI.
      *
@@ -705,7 +734,7 @@ public class ParserXMI {
 
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="Verificar tipo do nodo">
+    //<editor-fold defaultstate="collapsed" desc="Verify node type">
     /**
      * Método para verificar se o nodo pode ser convertido para um Element,
      * verificando assim o seu tipo.

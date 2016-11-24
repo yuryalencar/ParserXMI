@@ -17,7 +17,13 @@ public class Aplicacao {
         ParserXMI parser = new ParserXMI("/home/yuryalencar/NetBeansProjects/Parser_XMI/src/br/edu/unipampa/arquivo/xmi/Activity Diagram Example1.xml");
         ParserXMI parser1 = new ParserXMI("/home/yuryalencar/NetBeansProjects/Parser_XMI/src/br/edu/unipampa/arquivo/xmi/PintarCasa.xml");
         
-        new FromJSON().listToJson(parser.getDiagrams(), "DiagramaAtividades");
+        new FromJSON().fileToJson(parser.getDiagrams().get(0), "DiagramaAtividades");
+        new FromJSON().listToJson(parser.getDiagrams().get(0).getAssociations(), "DiagramaAtividadesAssociacoes");
+        new FromJSON().listToJson(parser.getDiagrams().get(0).getElements(), "DiagramaAtividadesElementos");
+        new FromJSON().fileToJson(parser1.getDiagrams().get(0), "DiagramaCasosDeUso");
+        new FromJSON().listToJson(parser1.getDiagrams().get(0).getAssociations(), "DiagramaCasosDeUsoAssociacoes");
+        new FromJSON().listToJson(parser1.getDiagrams().get(0).getElements(), "DiagramaCasosDeUsoElementos");
+        new FromJSON().listToJson(parser1.getDiagrams().get(0).getDependencies(), "DiagramaCasosDeUsoDependencias");
         System.out.println("-------------- ACTIVITY DIAGRAM --------------");
         for (UmlDiagram d : parser.getDiagrams()) {
             System.out.println(d.toString());
