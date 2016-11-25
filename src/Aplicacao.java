@@ -2,8 +2,6 @@
 import br.edu.unipampa.uml.UmlDiagram;
 import br.edu.unipampa.astah.xmi.ParserXMI;
 import br.edu.unipampa.json.FromJSON;
-import br.edu.unipampa.uml.*;
-import java.util.List;
 
 /**
  *

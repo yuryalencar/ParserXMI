@@ -685,7 +685,13 @@ public class ParserXMI {
         if(diagram.getId().equals(id)){
             diagram.addTaggedValue(tv);
         } else {
-            diagram.getElement(id).addTaggedValue(tv);
+            if(diagram.getElement(id) != null){
+                diagram.getElement(id).addTaggedValue(tv);
+            } else if(diagram.getAssociation(id) != null){
+                diagram.getAssociation(id).addTaggedValue(tv);
+            } else if(diagram.getDependency(id) != null){
+                diagram.getDependency(id).addTaggedValue(tv);
+            }
         }
         
     }
