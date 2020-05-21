@@ -7,7 +7,7 @@
 
 ## Table of Contents
 
-- [Tabela de Conteúdo](#table-of-contents)
+- [Table of Contents](#table-of-contents)
 - [About Project](#about-project)
 - [Starting](#starting)
   - [Installation](#installation)
